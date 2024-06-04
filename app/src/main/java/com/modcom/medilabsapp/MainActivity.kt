@@ -124,10 +124,6 @@ class MainActivity : AppCompatActivity() {
             }
 
         })
-
-
-
-
     }//end Oncreate
 
     fun fetchData(){
@@ -207,13 +203,5 @@ class MainActivity : AppCompatActivity() {
         number?.text = ""+helper.getNumItems()
         return super.onCreateOptionsMenu(menu)
     }
-
     //End
-
-
-
-
-
-
-
 }

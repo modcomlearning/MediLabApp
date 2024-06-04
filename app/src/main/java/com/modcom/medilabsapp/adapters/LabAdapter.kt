@@ -37,7 +37,7 @@ class LabAdapter(var context: Context):
         //Assume one Lab
          val lab = itemList[position]
          lab_name.text = lab.lab_name
-         permit_id.text = lab.permit_id
+         permit_id.text = "Permit ID: "+lab.permit_id
          email.text = lab.email
         //When one Lab is clicked, Move to Lab tests Activity
          holder.itemView.setOnClickListener {

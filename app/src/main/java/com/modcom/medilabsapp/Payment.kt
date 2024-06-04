@@ -24,7 +24,7 @@ class Payment : AppCompatActivity() {
         val btnpay = findViewById<MaterialButton>(R.id.btnpay)
         btnpay.setOnClickListener {
             val phone = findViewById<TextInputEditText>(R.id.phone)
-            val api = "https://CollinsNgunyi1921.pythonanywhere.com/api/make_payment"
+            val api = Constants.BASE_URL+"/make_payment"
             val body = JSONObject()
             body.put("phone", phone.text.toString())//254
             //body.put("amount", helper.totalCost().toString())
