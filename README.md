@@ -326,6 +326,5 @@ Also note we used android:theme="@style/Theme.AppCompat.Light.NoActionBar" theme
 
 
 ### Run Your App, You will have Screen1, Then Screen2 , then lands to MainActivity
-![img_1.png](img_1.png)    ![img_2.png](img_2.png)   ![img_3.png](img_3.png)
 <br>
-<img src="img_1.png" width="425"/> <img src="img_2.png" width="425"/>
+<img src="img_1.png" width="200"/> <img src="img_2.png" width="200"/>  <img src="img_3.png" width="200"/>
