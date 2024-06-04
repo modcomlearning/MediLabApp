@@ -102,7 +102,7 @@ class MainActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(applicationContext)
         recyclerView.setHasFixedSize(true)
         //Call the function
-       fetchData()
+        fetchData()
         swiperefresh = findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout)
         swiperefresh.setOnRefreshListener {
             fetchData()// fetch data again
