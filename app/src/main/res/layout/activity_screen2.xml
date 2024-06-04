@@ -38,7 +38,7 @@
         android:layout_height="wrap_content"
         android:text="Quality Service"
         android:textAlignment="textStart"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="10dp"
         android:layout_marginLeft="15dp"
         android:textColor="#353232"
         android:fontFamily="@font/montserrat"

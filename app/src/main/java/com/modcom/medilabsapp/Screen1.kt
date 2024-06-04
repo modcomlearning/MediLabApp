@@ -23,6 +23,5 @@ class Screen1 : AppCompatActivity() {
             startActivity(Intent(applicationContext, Screen2::class.java))
         }// End
 
-
     }
 }
