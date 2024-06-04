@@ -15,7 +15,8 @@ class ApiHelper(var context: Context) {
         Toast.makeText(context, "Please Wait for response", Toast.LENGTH_LONG).show()
         val client = AsyncHttpClient(true, 80, 443)
         val con_body = StringEntity(jsonData.toString())
-        val token = PrefsHelper.getPrefs(context, "refresh_token")
+        //val token = PrefsHelper.getPrefs(context, "refresh_token")
+        val token = PrefsHelper.getPrefs(context, "access_token")
         client.addHeader("Authorization", "Bearer $token")
 
         //post to API
