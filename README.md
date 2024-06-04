@@ -327,3 +327,6 @@ Also note we used android:theme="@style/Theme.AppCompat.Light.NoActionBar" theme
 
 ### Run Your App, You will have Screen1, Then Screen2 , then lands to MainActivity
 ![img_1.png](img_1.png)    ![img_2.png](img_2.png)   ![img_3.png](img_3.png)
+
+
+![alt-text-1](img_1.png "title-1") ![alt-text-2](img_2.png "title-2")
