@@ -277,9 +277,6 @@ Then in Screen2.kt, Write the Kotlin code. <br>
             fab2.setOnClickListener {
                 startActivity(Intent(applicationContext, MainActivity::class.java))
             }// End
-    
-         //Android OptionsMenu Kotlin
-    
         }
     }
 
@@ -328,5 +325,5 @@ Also note we used android:theme="@style/Theme.AppCompat.Light.NoActionBar" theme
 ### Run Your App, You will have Screen1, Then Screen2 , then lands to MainActivity
 <br>
 <p float="left">
-<img src="img_1.png" width="200"/> <img src="img_2.png" width="200"/>  <img src="img_3.png" width="200"/>
+<img src="img_1.png" width="250"/> <img src="img_2.png" width="250"/>  <img src="img_3.png" width="250"/>
 </p>
