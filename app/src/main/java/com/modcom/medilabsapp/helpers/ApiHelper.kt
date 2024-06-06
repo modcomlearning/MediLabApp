@@ -93,14 +93,7 @@ class ApiHelper(var context: Context) {
                     errorResponse: JSONObject?
                 ) {
                     callBack.onFailure(errorResponse.toString())
-                    //super.onFailure(statusCode, headers, throwable, errorResponse)
-                    //Todo handle the error
-//                    Toast.makeText(
-//                        context,
-//                        "Error Occurred" + throwable.toString(),
-//                        Toast.LENGTH_LONG
-//                    ).show()
-                    // progressbar.visibility = View.GONE
+
                 }
             })
     }//END POST
@@ -138,7 +131,6 @@ class ApiHelper(var context: Context) {
                     throwable: Throwable?
                 ) {
                     callBack.onFailure(responseString)
-                    //Toast.makeText(context, "Error Occurred"+throwable.toString(), Toast.LENGTH_LONG).show()
                 }
             })
 
@@ -167,14 +159,13 @@ class ApiHelper(var context: Context) {
                     throwable: Throwable?,
                     errorResponse: JSONObject?
                 ) {
-                    //super.onFailure(statusCode, headers, throwable, errorResponse)
                     //Todo handle the error
                     Toast.makeText(
                         context,
                         "Error Occurred" + throwable.toString(),
                         Toast.LENGTH_LONG
                     ).show()
-                    // progressbar.visibility = View.GONE
+
                 }
             })
     }//END PUT

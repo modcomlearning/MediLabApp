@@ -10,7 +10,6 @@ import com.google.android.material.textview.MaterialTextView
 import com.modcom.medilabsapp.LabTestsActivity
 import com.modcom.medilabsapp.R
 import com.modcom.medilabsapp.models.Lab
-
 class LabAdapter(var context: Context):
     RecyclerView.Adapter<LabAdapter.ViewHolder>() {
 
