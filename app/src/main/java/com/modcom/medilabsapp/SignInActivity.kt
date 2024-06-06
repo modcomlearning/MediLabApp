@@ -33,6 +33,7 @@ class SignInActivity : AppCompatActivity() {
             val api = Constants.BASE_URL+"/member_signin"
             val helper = ApiHelper(applicationContext)
             val body = JSONObject()
+            //Use Email Edit Text
             body.put("email", surname.text.toString())
             body.put("password", password.text.toString())
             helper.post(api, body, object : ApiHelper.CallBack {
