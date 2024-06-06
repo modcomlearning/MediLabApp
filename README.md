@@ -642,7 +642,7 @@ In MainActivity.kt Write below code.
 Run your App
 <br>
 
-<img src="img_6.png" width="400"/>
+<img src="img_6.png" width="300"/>
 
 Adding Swipe Refresh, We already have a SwipeRefresh View in activity_main.xml, in MainActivity.kt we just need to find it and apply a swipe refresh listener. <br>
 Below is updated code with SwipeRefresh
@@ -778,6 +778,15 @@ Below is updated activity_main.xml <br>
         
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     </LinearLayout>
+
+
+In LabAdapter.kt, add below function
+This function will be used by filter function to filter the Array list of Labs
+
+    fun filterList(filterList: List<LabTests>){
+       itemList = filterList
+       notifyDataSetChanged()
+    }
 
 
 Next in MainActivity.kt add below function code from https://justpaste.it/9j21s
@@ -964,6 +973,6 @@ Final Code for MainActivity.kt
 
 Run your App
 <br>
-<img src="img_5.png" width="400"/>
+<img src="img_5.png" width="300"/>
 
 
