@@ -1368,6 +1368,7 @@ On onBindViewHolder  function update the holder set OnclickListener , Update wit
 
 
 Now run your App Click on one Lab and it will open its Lab Tests
+<br>
 <img src="img_9.png" width="300"/>
 
 #### Step 3
