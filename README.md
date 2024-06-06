@@ -506,6 +506,14 @@ In adapters Package, Create a Class File named LabAdapter.kt and write below cod
             override fun getItemCount(): Int {
                 return itemList.size  //Count how may Items in the List
             }
+
+
+            
+            //This is for filtering data
+            fun filterList(filterList: List<Lab>){
+                itemList = filterList
+                notifyDataSetChanged()
+            }
             
         
             //Earlier we mentioned item List is empty!
@@ -973,6 +981,624 @@ Final Code for MainActivity.kt
 
 Run your App
 <br>
-<img src="img_5.png" width="300"/>
+<img src="img_8.png" width="300"/>
+
+Creating a LabTestActivity which will show LabTest when one Lab is clicked from above screenshot <br>
+
+In models Package create a Class File named LabTests.kt and write below code <br>
+LabTests.kt
+
+    class LabTests (
+        val availability: String = "",
+        var lab_id: String = "",
+        val more_info: String = "",
+        val reg_date: String = "",
+        var test_description: String = "",
+        val test_discount: String = "",
+        var test_cost: String = "",
+        var test_id: String = "",
+        var test_name: String = "",
+    )
+
+Above the variable names Must be same as your API keys <br>
+The Recycler View that will display the Lab Tests is more similar with the one displaying the Lab, so the process is same <br>
+
+in res/layout create a file named single_labtests.xml and write below code.
+single_labtests.xml
+
+        <?xml version="1.0" encoding="utf-8"?>
+        <androidx.cardview.widget.CardView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardElevation="10dp"
+        android:layout_margin="8dp"
+        app:cardCornerRadius="5dp">
+        
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="120dp">
+        
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/labimage"
+                    android:layout_width="55dp"
+                    android:layout_height="55dp"
+                    android:src="@drawable/screen1"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"/>
+        
+                <LinearLayout
+                    android:id="@+id/linear1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toEndOf="@id/labimage"
+                    android:orientation="vertical"
+                    android:layout_marginLeft="10dp">
+        
+                    <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Lipid Profile"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:fontFamily="@font/montserrat"
+                        android:textColor="@color/black"
+                        android:id="@+id/test_name"/>
+        
+                    <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="This is a nice Lab tests for keeping Fit, This is a nice test keeping Fit"
+                        android:textStyle="normal"
+                        android:textSize="12sp"
+                        android:maxLines="2"
+                        android:fontFamily="@font/montserrat"
+                        android:textColor="#787474"
+                        android:layout_marginTop="6dp"
+                        android:id="@+id/test_description"/>
+                </LinearLayout>
+        
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/linear1"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginBottom="5dp"
+                    android:orientation="vertical">
+        
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/test_cost"
+                        android:layout_width="315dp"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/montserrat"
+                        android:text="KES 1,200"
+                        android:textAlignment="textEnd"
+                        android:textColor="#FF5722"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+        
+            </RelativeLayout>
+        </androidx.cardview.widget.CardView>
+
+
+in adapters package, Create a Class File named LabTestsAdapter.kt and write below code
+
+        package com.modcom.medilabsapp.adapters
+        import android.content.Context
+        import android.view.LayoutInflater
+        import android.view.View
+        import android.view.ViewGroup
+        import androidx.recyclerview.widget.RecyclerView
+        import com.google.android.material.textview.MaterialTextView
+        import com.modcom.medilabsapp.R
+        import com.modcom.medilabsapp.models.LabTests
+        
+        class LabTestsAdapter(var context: Context):
+        RecyclerView.Adapter<LabTestsAdapter.ViewHolder>() {
+        
+        
+            //Create a List and connect it with our model
+            var itemList : List<LabTests> = listOf() //Its empty
+        
+            //Create a Class here, will hold our views in single_lab xml
+            inner class  ViewHolder(itemView: View):  RecyclerView.ViewHolder(itemView)
+        
+            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LabTestsAdapter.ViewHolder {
+                //access/inflate the single labtests xml
+                val view = LayoutInflater.from(parent.context).inflate(R.layout.single_labtests,
+                    parent, false)
+        
+                return ViewHolder(view) //pass the single lab to ViewHolder
+            }
+        
+            override fun onBindViewHolder(holder: LabTestsAdapter.ViewHolder, position: Int) {
+                 //Find your 3 text views
+                val test_name = holder.itemView.findViewById<MaterialTextView>(R.id.test_name)
+                val test_description = holder.itemView.findViewById<MaterialTextView>(R.id.test_description)
+                val test_cost = holder.itemView.findViewById<MaterialTextView>(R.id.test_cost)
+                //Assume one Lab, bind data, 
+                 val item = itemList[position]
+                 test_name.text = item.test_name
+                 test_description.text = item.test_description
+                 test_cost.text = item.test_cost+" KES"
+                 holder.itemView.setOnClickListener {
+                    //To Navigate to single item Activity
+                 }//end
+        
+        
+        
+               // Toast.makeText(context, "yyy"+item.test_cost, Toast.LENGTH_SHORT).show()
+            }
+        
+            //count number of items
+            override fun getItemCount(): Int {
+                return itemList.size  //Count how may Items in the List
+            }
+        
+            //This is for filtering data
+            fun filterList(filterList: List<LabTests>){
+                itemList = filterList
+                notifyDataSetChanged()
+            }
+        
+        
+            //Earlier we mentioned item List is empty!
+            //We will get data from our APi, then bring it to below function
+            //The data you bring here must follow the Lab model
+            fun setListItems(data: List<LabTests>){
+                itemList = data //map/link the data to itemlist
+                notifyDataSetChanged()
+            //Tell this adapter class that now itemList is loaded with data
+            }
+            //justpaste.it/cgaym
+        }
+
+
+In your main Package create an Empty Views Activity named LabTestsActivity and write below code.
+NB: Below code is 90% same as MainActivity we did for Laboratories. <br>
+
+        package com.modcom.medilabsapp
+        import androidx.appcompat.app.AppCompatActivity
+        import android.os.Bundle
+        import android.text.Editable
+        import android.text.TextWatcher
+        import android.util.Log
+        import android.view.View
+        import android.widget.EditText
+        import android.widget.ProgressBar
+        import android.widget.Toast
+        import androidx.recyclerview.widget.LinearLayoutManager
+        import androidx.recyclerview.widget.RecyclerView
+        import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        import com.google.gson.GsonBuilder
+        import com.modcom.medilabsapp.adapters.LabAdapter
+        import com.modcom.medilabsapp.adapters.LabTestsAdapter
+        import com.modcom.medilabsapp.constants.Constants
+        import com.modcom.medilabsapp.helpers.ApiHelper
+        import com.modcom.medilabsapp.models.Lab
+        import com.modcom.medilabsapp.models.LabTests
+        import org.json.JSONArray
+        import org.json.JSONObject
+        
+        class LabTestsActivity : AppCompatActivity() {
+        lateinit var itemList: List<LabTests>
+        lateinit var labtestAdapter: LabTestsAdapter
+        lateinit var recyclerView: RecyclerView
+        lateinit var progress: ProgressBar
+        lateinit var swiperefresh: SwipeRefreshLayout
+        
+            override fun onCreate(savedInstanceState: Bundle?) {
+                super.onCreate(savedInstanceState)
+                setContentView(R.layout.activity_lab_tests)
+        
+        
+                progress = findViewById(R.id.progress)
+                recyclerView = findViewById(R.id.recycler)
+                labtestAdapter = LabTestsAdapter(applicationContext)
+                recyclerView.layoutManager = LinearLayoutManager(applicationContext)
+                recyclerView.setHasFixedSize(true)
+        
+                post_fetch()
+        
+                swiperefresh = findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout)
+                swiperefresh.setOnRefreshListener {
+                    post_fetch()// fetch data again
+                }//end refresh
+        
+                //Filter labs
+                val etsearch = findViewById<EditText>(R.id.etsearch)
+                etsearch.addTextChangedListener(object: TextWatcher {
+                    override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+        
+                    }
+        
+                    override fun onTextChanged(texttyped: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                        filter(texttyped.toString())
+                    }
+        
+                    override fun afterTextChanged(p0: Editable?) {
+        
+                    }
+        
+                })
+        
+        
+        
+        
+            }//end oncreate
+        
+            
+            fun post_fetch(){
+                val api = Constants.BASE_URL+"/lab_tests"
+                //Above APi needs a Body, So we have to build it
+                val body = JSONObject()
+                //Retrieve the id from Intent Extras - To Add this ID to bundles extras Later
+                val id = intent.extras?.getString("key1")
+                //Toast.makeText(applicationContext, "ID $id", Toast.LENGTH_SHORT).show()
+                //provide the ID to the API
+                body.put("lab_id", id) //NB: 4 is static
+                val helper = ApiHelper(applicationContext)
+                helper.post(api, body, object : ApiHelper.CallBack{
+                    override fun onSuccess(result: JSONArray?) {
+                        val gson = GsonBuilder().create()
+                        itemList = gson.fromJson(result.toString(),
+                            Array<LabTests>::class.java).toList()
+                        //Finally, our adapter has the data
+                        labtestAdapter.setListItems(itemList)
+                        //For the sake of recycling/Looping items, add the adapter to recycler
+                        recyclerView.adapter = labtestAdapter
+                        progress.visibility = View.GONE
+                        swiperefresh.isRefreshing = false
+                    }
+                    override fun onSuccess(result: JSONObject?) {
+                        Toast.makeText(applicationContext, result.toString(),
+                            Toast.LENGTH_SHORT).show()
+                        progress.visibility = View.GONE
+                    }
+        
+                    override fun onFailure(result: String?) {
+                        Toast.makeText(applicationContext, "Error:"+result.toString(),
+                            Toast.LENGTH_SHORT).show()
+                        Log.d("failureerrors", result.toString())
+                    }
+                })
+            }//end fetch
+        
+        
+            private fun filter(text: String) {
+                // creating a new array list to filter our data.
+                val filteredlist: ArrayList<LabTests> = ArrayList()
+                // running a for loop to compare elements.
+                for (item in itemList) {
+                    // checking if the entered string matched with any item of our recycler view.
+                    if (item.test_name.lowercase().contains(text.lowercase())) {
+                        // if the item is matched we are
+                        // adding it to our filtered list.
+                        filteredlist.add(item)
+                    }
+                }
+                if (filteredlist.isEmpty()) {
+                    // if no item is added in filtered list we are
+                    // displaying a toast message as no data found.
+                    //Toast.makeText(this, "No Data Found..", Toast.LENGTH_SHORT).show()
+                    labtestAdapter.filterList(filteredlist)
+                } else {
+                    // at last we are passing that filtered
+                    // list to our adapter class.
+                    labtestAdapter.filterList(filteredlist)
+                }
+            }
+        
+        }
+
+
+
+In above code we have a function named Post fetch, see it below <br>
+
+          fun post_fetch(){
+                val api = Constants.BASE_URL+"/lab_tests"
+
+                //Above APi needs a Body to parse the lab_id, So we have to build the body
+                val body = JSONObject()
+
+                //Retrieve the id from Intent Extras
+                val id = intent.extras?.getString("key1")
+                //Toast.makeText(applicationContext, "ID $id", Toast.LENGTH_SHORT).show()
+                //provide the ID to the API
+                body.put("lab_id", id) //NB: 4 is static
+                val helper = ApiHelper(applicationContext)
+                helper.post(api, body, object : ApiHelper.CallBack{
+                    override fun onSuccess(result: JSONArray?) {
+                        val gson = GsonBuilder().create()
+                        itemList = gson.fromJson(result.toString(),
+                            Array<LabTests>::class.java).toList()
+                        //Finally, our adapter has the data
+                        labtestAdapter.setListItems(itemList)
+                        //For the sake of recycling/Looping items, add the adapter to recycler
+                        recyclerView.adapter = labtestAdapter
+                        progress.visibility = View.GONE
+                        swiperefresh.isRefreshing = false
+                    }
+                    override fun onSuccess(result: JSONObject?) {
+                        Toast.makeText(applicationContext, result.toString(),
+                            Toast.LENGTH_SHORT).show()
+                        progress.visibility = View.GONE
+                    }
+        
+                    override fun onFailure(result: String?) {
+                        Toast.makeText(applicationContext, "Error:"+result.toString(),
+                            Toast.LENGTH_SHORT).show()
+                        Log.d("failureerrors", result.toString())
+                    }
+                })
+            }//end fetch
+
+
+
+Since the Lab Test API requires a lab_id to return specific lab tests, we have retrieved the lab_id from extras with code below <br>
+We use key1 to retrieve it. 
+
+                //Retrieve the id from Intent Extras
+                val id = intent.extras?.getString("key1")
+
+
+Before we run our code we need to store the lab_id of the Clicked Lab from MainActivity - LabAdapter
+This will help above code retrieve that lab_id.
+
+Open your LabAdapter.kt  
+On onBindViewHolder  function update the holder set OnclickListener , Update with below code<br>
+
+           holder.itemView.setOnClickListener {
+                 //carry/cpature the Lab_id of what you clicked.
+                 //carry it with Bundles
+                 val id = lab.lab_id  //lab id
+                 //pass this ID along with intent
+                 val i = Intent(context, LabTestsActivity::class.java)
+
+                 //We use key1 to save it
+                 i.putExtra("key1", id)
+                 i.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                 context.startActivity(i)
+         }
+
+
+
+Now run your App Click on one Lab and it will open its Lab Tests
+<img src="img_9.png" width="300"/>
+
+#### Step 3
+In this section, when one lab test is clicked from above screen, You will learn how to display it on a Single Screen<br>
+In your Main Package, Create an Empty Views Activity named SingleLabTest <br>
+
+In LabTestAdapter, Update the onBindViewHolder() function, Update code for holder setonclick listener <br>
+In below code, after a Lab test is clicked from recycler view, we get all its details and add them to Bundle extras, then we navigate to SingleLabTest Activity
+
+        holder.itemView.setOnClickListener {
+                val i = Intent(context, SingleLabTest::class.java)
+                i.putExtra("lab_id", item.lab_id)
+                i.putExtra("test_id", item.test_id)
+                i.putExtra("test_discount", item.test_discount)
+                i.putExtra("test_cost", item.test_cost)
+                i.putExtra("test_name", item.test_name)
+                i.putExtra("test_description", item.test_description)
+                i.putExtra("availability", item.availability)
+                i.putExtra("more_info", item.more_info)
+                i.putExtra("reg_date", item.reg_date)
+                i.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                context.startActivity(i)
+        }//end
+
+
+In res/layout open <b>activity_single_lab_test.xml</b> and write below code <br>
+This code has TextViews to be used in displaying data for specific lab test. 
+
+        <?xml version="1.0" encoding="utf-8"?>
+        <androidx.cardview.widget.CardView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardElevation="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_margin="8dp"
+        app:cardCornerRadius="5dp">
+        
+        <RelativeLayout
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".SingleLabTest">
+        
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/linear1"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/labimage"
+                    android:layout_width="55dp"
+                    android:layout_height="55dp"
+                    android:src="@drawable/screen1"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"/>
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Test Y"
+                    android:fontFamily="@font/montserrat"
+                    android:id="@+id/test_name"
+                    android:textStyle="bold"
+                    android:textSize="18dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginBottom="5dp"/>
+            </LinearLayout>
+        
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="15dp"
+                android:layout_below="@+id/linear1"
+                android:id="@+id/linear2">
+                <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Dummy Desc Dummy DescDummy scDummy DescDummy DescDummy DescDummy DescDummy DescDummy DescDummy Desc"
+                android:fontFamily="@font/montserrat"
+                android:id="@+id/test_description"
+                android:textStyle="normal"
+                android:textSize="13dp"
+                android:layout_marginBottom="5dp"/>
+            </LinearLayout>
+        
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/linear3"
+                android:layout_marginTop="15dp"
+                android:orientation="horizontal"
+                android:layout_below="@id/linear2">
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="5% OFF"
+                    android:id="@+id/test_discount"
+                    android:fontFamily="@font/montserrat"
+                    android:textStyle="bold"
+                    android:textSize="40dp"
+                    android:padding="10dp"
+                    android:textColor="#FF9800"
+                    android:layout_marginBottom="5dp"/>
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="KES 2,300"
+                    android:id="@+id/test_cost"
+                    android:fontFamily="@font/montserrat"
+                    android:textStyle="bold"
+                    android:textSize="25dp"
+                    android:textColor="@color/black"
+                    android:layout_marginBottom="5dp"/>
+            </LinearLayout>
+        
+        
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/linear4"
+                android:layout_marginTop="10dp"
+                android:orientation="vertical"
+                android:layout_below="@id/linear3">
+        
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Dummy Avalability"
+                    android:fontFamily="@font/montserrat"
+                    android:id="@+id/availability"
+                    android:textStyle="bold"
+                    android:textSize="14dp"
+                    android:layout_marginBottom="5dp"/>
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Dummy Info"
+                    android:fontFamily="@font/montserrat"
+                    android:id="@+id/more_info"
+                    android:textSize="12dp"
+                    android:layout_marginBottom="5dp"/>
+                <com.google.android.material.button.MaterialButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text= "Add to Cart"
+                    android:fontFamily="@font/montserrat"
+                    android:layout_margin="10dp"
+                    android:id="@+id/addcart"/>
+            </LinearLayout>
+        
+        
+        </RelativeLayout>
+        </androidx.cardview.widget.CardView>
+
+
+
+In SingleLabTest Activity, write below code.
+In this code we get data from Bundle extras and place in Text Views
+
+            package com.modcom.medilabsapp
+            import android.content.Intent
+            import androidx.appcompat.app.AppCompatActivity
+            import android.os.Bundle
+            import com.google.android.material.button.MaterialButton
+            import com.google.android.material.textview.MaterialTextView
+            
+            class SingleLabTest : AppCompatActivity() {
+            
+                override fun onCreate(savedInstanceState: Bundle?) {
+                    super.onCreate(savedInstanceState)
+                    setContentView(R.layout.activity_single_lab_test)
+
+
+                    
+                    //find the textViews, get data from extras and place it in the textview
+                    val tvtest_name = findViewById<MaterialTextView>(R.id.test_name)
+                    val test_name = intent.extras?.getString("test_name")
+                    tvtest_name.text = test_name
+                    //==============
+                    val tvtest_cost = findViewById<MaterialTextView>(R.id.test_cost)
+                    val test_cost = intent.extras?.getString("test_cost")
+                    tvtest_cost.text = "$test_cost KES"
+                    //==============
+                    val tvtest_discount = findViewById<MaterialTextView>(R.id.test_discount)
+                    val test_discount = intent.extras?.getString("test_discount")
+                    tvtest_discount.text = "$test_discount % OFF"
+                    //==============
+                    val tvtest_description = findViewById<MaterialTextView>(R.id.test_description)
+                    val test_description = intent.extras?.getString("test_description")
+                    tvtest_description.text = test_description
+                    //==============
+                    val tvtest_availability = findViewById<MaterialTextView>(R.id.availability)
+                    val availability = intent.extras?.getString("availability")
+                    tvtest_availability.text = availability
+                    //=================
+                    val tvtest_info = findViewById<MaterialTextView>(R.id.more_info)
+                    val more_info = intent.extras?.getString("more_info")
+                    tvtest_info.text = more_info
+            
+                    val addcart = findViewById<MaterialButton>(R.id.addcart)
+                    //To DO add to cart 
+            
+                }//end oncreate
+            
+                //on Back Pressed go back to main activity
+                override fun onBackPressed() {
+                    val i = Intent(applicationContext, MainActivity::class.java)
+                    startActivity(i)
+                    finishAffinity()
+                }
+            }//end class
+
+
+
+Run your, Click on one Lab, then Click on Lab Test, and see the Lab Test Details.
+
+<p float="left">
+<img src="img_8.png" width="250"/> <img src="img_9.png" width="250"/>  <img src="img_10.png" width="250"/>
+</p>
+
+
+
+
+
+
+
+
+
 
 

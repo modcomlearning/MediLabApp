@@ -43,16 +43,13 @@ class LabAdapter(var context: Context):
              //carry the Lab_id of what you clicked.
              //carry it with Bundles, Preferences
              val id = lab.lab_id
-             val name = lab.lab_name
              //pass this ID along with intent, I prefer shared preferecne
              //Save id to prefs
              val i = Intent(context, LabTestsActivity::class.java)
              i.putExtra("key1", id)
-             i.putExtra("key2", name)
              i.flags = Intent.FLAG_ACTIVITY_NEW_TASK
              context.startActivity(i)
          }
-
     }
 
     override fun getItemCount(): Int {

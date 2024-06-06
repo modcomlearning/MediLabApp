@@ -1,21 +1,32 @@
 package com.modcom.medilabsapp
 
+import android.content.Intent
+import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.ProgressBar
+import android.widget.TextView
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.textview.MaterialTextView
 import com.google.gson.GsonBuilder
 import com.modcom.medilabsapp.adapters.LabAdapter
 import com.modcom.medilabsapp.constants.Constants
 import com.modcom.medilabsapp.helpers.ApiHelper
+import com.modcom.medilabsapp.helpers.PrefsHelper
+import com.modcom.medilabsapp.helpers.SQLiteCartHelper
 import com.modcom.medilabsapp.models.Lab
 import org.json.JSONArray
 import org.json.JSONObject
@@ -28,10 +39,62 @@ class MainActivity : AppCompatActivity() {
      lateinit var progress: ProgressBar
      lateinit var swiperefresh: SwipeRefreshLayout
 
+     fun update(){
+         val user = findViewById<MaterialTextView>(R.id.user)
+         val signin = findViewById<MaterialButton>(R.id.signin)
+         val signout = findViewById<MaterialButton>(R.id.signout)
+         val profile = findViewById<MaterialButton>(R.id.profile)
+         signin.visibility = View.GONE
+         signout.visibility = View.GONE
+         profile.visibility = View.GONE
+
+         val token = PrefsHelper.getPrefs(applicationContext, "refresh_token")
+         if (token.isEmpty()){ //Token not available
+             user.text = "Not Logged In"
+             signin.visibility = View.VISIBLE
+             signin.setOnClickListener {
+                 startActivity(Intent(applicationContext, SignInActivity::class.java))
+             }
+         }
+         else{  //token  available
+             profile.visibility = View.VISIBLE
+             profile.setOnClickListener {
+                startActivity(Intent(applicationContext, MemberProfile::class.java))
+             }//end
+
+             val surname = PrefsHelper.getPrefs(applicationContext, "surname")
+             user.text = "Welcome $surname"
+             signout.visibility = View.VISIBLE
+             signout.setOnClickListener{
+                 PrefsHelper.clearPrefs(applicationContext)
+                 startActivity(intent)
+                 finishAffinity()
+             }
+         }
+     }//end
+
+    fun requestLocation(){
+        if(ActivityCompat.checkSelfPermission(
+                this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION) !=
+            PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION,
+                    android.Manifest.permission.ACCESS_COARSE_LOCATION),
+                123)
+        }//end if
+        else {
+
+        }
+    }//end function
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        requestLocation()
+        update()
 
         progress = findViewById(R.id.progress)
         recyclerView = findViewById(R.id.recycler)
@@ -45,22 +108,22 @@ class MainActivity : AppCompatActivity() {
             fetchData()// fetch data again
         }//end refresh
 
-        //Filter Labs
-//        val etsearch = findViewById<EditText>(R.id.etsearch)
-//        etsearch.addTextChangedListener(object: TextWatcher{
-//            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-//
-//            }
-//
-//            override fun onTextChanged(texttyped: CharSequence?, p1: Int, p2: Int, p3: Int) {
-//                 filter(texttyped.toString())
-//            }
-//
-//            override fun afterTextChanged(p0: Editable?) {
-//
-//            }
-//
-//        })
+        //Filter labs
+        val etsearch = findViewById<EditText>(R.id.etsearch)
+        etsearch.addTextChangedListener(object: TextWatcher{
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+
+            override fun onTextChanged(texttyped: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                 filter(texttyped.toString())
+            }
+
+            override fun afterTextChanged(p0: Editable?) {
+
+            }
+
+        })
     }//end Oncreate
 
     fun fetchData(){
@@ -124,4 +187,21 @@ class MainActivity : AppCompatActivity() {
             labAdapter.filterList(filteredlist)
         }
     }
+
+    //Start
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main, menu)
+        val item: MenuItem = menu!!.findItem(R.id.mycart)
+        item.setActionView(R.layout.design)
+        val actionView: View? = item.actionView
+        val number = actionView?.findViewById<TextView>(R.id.badge)
+        val image = actionView?.findViewById<ImageView>(R.id.image)
+        image?.setOnClickListener {
+            startActivity(Intent(applicationContext, MyCart::class.java))
+        }
+        val helper = SQLiteCartHelper(applicationContext)
+        number?.text = ""+helper.getNumItems()
+        return super.onCreateOptionsMenu(menu)
+    }
+    //End
 }

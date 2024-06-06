@@ -11,7 +11,7 @@ import com.google.android.material.textview.MaterialTextView
 import com.modcom.medilabsapp.helpers.SQLiteCartHelper
 
 class SingleLabTest : AppCompatActivity() {
-    @SuppressLint("SetTextI18n")
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_single_lab_test)
