@@ -42,27 +42,27 @@ class SignInActivity : AppCompatActivity() {
                 //pass: Qwerty1234
                 override fun onSuccess(result: JSONObject?) {
                     //Consume the JSON - access keys
-                    if (result!!.has("refresh_token")){
-                        val refresh_token = result.getString("refresh_token")
+                    if (result!!.has("access_token")){
+
                         val access_token = result.getString("access_token")
-                        val message = result.getString("message")// {} Object user details
+                        val member = result.getString("member")// {} Object user details
 
                         Toast.makeText(applicationContext, "Success",
                             Toast.LENGTH_SHORT).show()
 
                         PrefsHelper.savePrefs(applicationContext,
-                            "refresh_token", refresh_token)
-                        PrefsHelper.savePrefs(applicationContext,
                             "access_token", access_token)
 
-                        //convert message to an Object
-                        val member = JSONObject(message)
-                        val member_id = member.getString("member_id")
-                        val email = member.getString("email")
-                        val surname = member.getString("surname")
+                        //convert member to an Object
+                        val memberObject = JSONObject(member)
+                        val member_id = memberObject.getString("member_id")
+                        val email = memberObject.getString("email")
+                        val surname = memberObject.getString("surname")
+
+                        //save member_id, email, surname to Prefs
 
                         PrefsHelper.savePrefs(applicationContext,
-                            "userObject", message)
+                            "userObject", member)
 
                         PrefsHelper.savePrefs(applicationContext,
                             "member_id", member_id)

@@ -134,6 +134,7 @@ class SignUpActivity : AppCompatActivity() {
                 body.put("password", password.text.toString())
                 body.put("gender", gender)
                 body.put("location_id", location_id)
+                body.put("status", "TRUE")
 
 
                 helper.post(api, body, object : ApiHelper.CallBack {

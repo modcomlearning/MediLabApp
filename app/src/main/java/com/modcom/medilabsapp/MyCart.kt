@@ -26,7 +26,7 @@ class MyCart : AppCompatActivity() {
             checkout.visibility = View.GONE
         }//end
         checkout.setOnClickListener {
-             val token = PrefsHelper.getPrefs(applicationContext, "refresh_token")
+             val token = PrefsHelper.getPrefs(applicationContext, "access_token")
              if (token.isEmpty()){
                  Toast.makeText(applicationContext, "Not Logged In",
                      Toast.LENGTH_SHORT).show()

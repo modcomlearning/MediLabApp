@@ -48,7 +48,7 @@ class MainActivity : AppCompatActivity() {
          signout.visibility = View.GONE
          profile.visibility = View.GONE
 
-         val token = PrefsHelper.getPrefs(applicationContext, "refresh_token")
+         val token = PrefsHelper.getPrefs(applicationContext, "access_token")
          if (token.isEmpty()){ //Token not available
              user.text = "Not Logged In"
              signin.visibility = View.VISIBLE

@@ -63,10 +63,6 @@ class LabTestsActivity : AppCompatActivity() {
             }
 
         })
-
-
-
-
     }//end oncreate
 
 
