@@ -15,6 +15,12 @@ class SingleLabTest : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_single_lab_test)
+
+
+        val helper = SQLiteCartHelper(applicationContext)
+        val total = helper.totalCost()
+        Toast.makeText(applicationContext, "Total $total", Toast.LENGTH_SHORT).show()
+
         //find the textView
         val test_id = intent.extras?.getString("test_id")
         //=============

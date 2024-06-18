@@ -36,7 +36,7 @@ class SQLiteCartHelper(context: Context):
          val values = ContentValues()
          values.put("test_id", test_id)
          values.put("test_name", test_name)
-        values.put("lab_id", lab_id)
+         values.put("lab_id", lab_id)
          values.put("test_cost", test_cost)
          values.put("test_description", test_description)
 
@@ -83,23 +83,26 @@ class SQLiteCartHelper(context: Context):
        db.delete("cart", "test_id=?", arrayOf(test_id))
         println("Item Id $test_id Removed")
         Toast.makeText(context, "Item Id $test_id Removed", Toast.LENGTH_SHORT).show()
-        val i = Intent(context, MyCart::class.java)
-        i.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        context.startActivity(i)
+//        val i = Intent(context, MyCart::class.java)
+//        i.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+//        context.startActivity(i)
    }//end
 
 
+
+    //Find Total Cost
     fun totalCost(): Double {
         val db = this.readableDatabase
-        val result: Cursor = db.rawQuery("select SUM(test_cost) from cart",
+        val result: Cursor = db.rawQuery("select test_cost from cart",
             null)
+        //Set total to 0.0
         var total: Double = 0.0
         while (result.moveToNext()){
             //the cursor result returns a Lists of test_cost.
-            //Below result.getDouble(0) to retrieve the value from the first
-            // column of the current row
+            //Loop through as you add them to total
             total += result.getDouble(0)
         }//end while
+        //Return the updated total
         return total
     }//End
     //https://github.com/modcomlearning/MediLabApp
