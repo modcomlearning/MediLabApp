@@ -50,7 +50,6 @@ class LabTestsCartAdapter(var context: Context):
             helper.clearCartById(test_id)
             //The Item is Removed.
             //Go to Helper and reload the MyCart Activity in clearCartById fun
-
         }
 
        // Toast.makeText(context, "yyy"+item.test_cost, Toast.LENGTH_SHORT).show()

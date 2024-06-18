@@ -1773,7 +1773,7 @@ The Next function deletes a record by ID. This deletes one record  at a time.
 ### Step 7
 Below function will be used to find the Total of all items in the Cart
     
-        //Find Total Cost
+       //Find Total Cost
         fun totalCost(): Double {
             val db = this.readableDatabase
             val result: Cursor = db.rawQuery("select test_cost from cart",
@@ -1883,17 +1883,19 @@ Below is the Full Code for SQLiteCartHelper.
             }//end
             
             
+             //Find Total Cost
             fun totalCost(): Double {
                 val db = this.readableDatabase
-                val result: Cursor = db.rawQuery("select SUM(test_cost) from cart",
+                val result: Cursor = db.rawQuery("select test_cost from cart",
                     null)
+                //Set total to 0.0
                 var total: Double = 0.0
                 while (result.moveToNext()){
                     //the cursor result returns a Lists of test_cost.
-                    //Below result.getDouble(0) to retrieve the value from the first
-                    // column of the current row
+                    //Loop through as you add them to total
                     total += result.getDouble(0)
                 }//end while
+                //Return the updated total
                 return total
             }//End
          
