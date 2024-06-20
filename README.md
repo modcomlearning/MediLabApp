@@ -1922,9 +1922,501 @@ Below is the Full Code for SQLiteCartHelper.
     
 
 ## Part 3
+### Step 1
+In this section, we will create MyCart activity, this activity will display the shopping Cart in a recycler view.
+in res/layout, Create a file named single_labtests_cart.xml, In this File write below code, NB: This file is similar to single_labtests created earlier.
+
+        <?xml version="1.0" encoding="utf-8"?>
+        <androidx.cardview.widget.CardView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardElevation="10dp"
+        android:layout_margin="8dp"
+        app:cardCornerRadius="5dp">
+        
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+        
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+        
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/labimage"
+                    android:layout_width="55dp"
+                    android:layout_height="55dp"
+                    android:src="@drawable/screen1"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"/>
+        
+                <LinearLayout
+                    android:id="@+id/linear1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toEndOf="@id/labimage"
+                    android:orientation="vertical"
+                    android:layout_marginLeft="10dp">
+        
+                    <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Lipid Profile"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:fontFamily="@font/montserrat"
+                        android:textColor="@color/black"
+                        android:id="@+id/test_name"/>
+        
+                    <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="This is a nice Lab tests for keeping Fit, This is a nice test keeping Fit"
+                        android:textStyle="normal"
+                        android:textSize="12sp"
+                        android:maxLines="2"
+                        android:fontFamily="@font/montserrat"
+                        android:textColor="#787474"
+                        android:layout_marginTop="6dp"
+                        android:id="@+id/test_description"/>
+                </LinearLayout>
+        
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/linear1"
+                    android:layout_marginTop="10dp"
+                    android:id="@+id/linear2"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginBottom="5dp"
+                    android:orientation="vertical">
+        
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/test_cost"
+                        android:layout_width="315dp"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/montserrat"
+                        android:text="KES 1,200"
+                        android:textAlignment="textEnd"
+                        android:textColor="#FF5722"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </RelativeLayout>
+        
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp">
+                <com.google.android.material.button.MaterialButton
+                    android:layout_width="100dp"
+                    android:layout_height="40dp"
+                    android:text="Remove"
+                    android:textSize="12sp"
+                    android:layout_gravity="right"
+                    android:id="@+id/remove"/>
+            </LinearLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+### Step 2
+Then in adapters package, Create a Kotlin class file named LabTestsCartAdapter.kt and write below code.
+NB: This code is similar to LabTestsAdapter.
+
+            package com.modcom.medilabsapp.adapters
+            import android.content.Context
+            import android.view.LayoutInflater
+            import android.view.View
+            import android.view.ViewGroup
+            import androidx.recyclerview.widget.RecyclerView
+            import com.google.android.material.button.MaterialButton
+            import com.google.android.material.textview.MaterialTextView
+            import com.modcom.medilabsapp.R
+            import com.modcom.medilabsapp.models.LabTests
+            
+            class LabTestsCartAdapter(var context: Context):
+            RecyclerView.Adapter<LabTestsCartAdapter.ViewHolder>() {
+            
+                //Create a List and connect it with our model
+                var itemList : List<LabTests> = listOf() //Its empty
+                //Create a Class here, will hold our views in single_lab xml
+                inner class  ViewHolder(itemView: View):  RecyclerView.ViewHolder(itemView)
+            
+                override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LabTestsCartAdapter.ViewHolder {
+                    //access/inflate the single lab xml
+                    val view = LayoutInflater.from(parent.context).inflate(R.layout.single_labtests_cart,
+                        parent, false)
+            
+                    return ViewHolder(view) //pass the single lab to ViewHolder
+                }
+            
+                override fun onBindViewHolder(holder: LabTestsCartAdapter.ViewHolder, position: Int) {
+                     //Find your 3 text views
+                    val test_name = holder.itemView.findViewById<MaterialTextView>(R.id.test_name)
+                    val test_description = holder.itemView.findViewById<MaterialTextView>(R.id.test_description)
+                    val test_cost = holder.itemView.findViewById<MaterialTextView>(R.id.test_cost)
+                    //Assume one Lab
+                     val item = itemList[position]
+                     test_name.text = item.test_name
+                     test_description.text = item.test_description
+                     test_cost.text = item.test_cost+" KES"
+                    //Find remove button and set Listener
+                    val remove = holder.itemView.findViewById<MaterialButton>(R.id.remove)
+                    remove.setOnClickListener {
+                           //TODO it later, to remove an item from cart
+                    }
+            
+                   // Toast.makeText(context, "yyy"+item.test_cost, Toast.LENGTH_SHORT).show()
+                }
+            
+                override fun getItemCount(): Int {
+                    return itemList.size  //Count how may Items in the List
+                }
+            
+                //Earlier we mentioned item List is empty!
+                //We will get data from our APi, then bring it to below function
+                //The data you bring here must follow the Lab model
+                fun setListItems(data: List<LabTests>){
+                    itemList = data //map/link the data to itemlist
+                    notifyDataSetChanged()
+                //Tell this adapter class that now itemList is loaded with data
+                }
+                
+            }
+
+### Step 3
+In the Main Package, create a new Empty Views Activity named MyCart and write below code
+
+        <?xml version="1.0" encoding="utf-8"?>
+        <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_margin="10dp"
+        android:layout_height="match_parent"
+        tools:context=".MyCart">
+        
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Total: 2300 KES"
+                android:textSize="30sp"
+                android:textAlignment="textEnd"
+                android:textColor="#FF9800"
+                android:layout_margin="10dp"
+                android:id="@+id/total"/>
+        
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:listitem="@layout/single_labtests_cart"
+                android:id="@+id/recycler"/>
+        
+            <com.google.android.material.button.MaterialButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text = "Checkout"
+                android:padding="10dp"
+                android:textStyle="bold"
+                android:layout_margin="10dp"
+                android:id="@+id/checkout"/>
+
+        </LinearLayout>
 
 
 
+Above XML will be used to display the shopping Cart and the Total.
+
+### Step 4
+In MyCart.kt, Write below code, step by step.
 
 
+        package com.modcom.medilabsapp
 
+        import androidx.appcompat.app.AppCompatActivity
+        import android.os.Bundle
+        import android.view.View
+        import android.widget.Toast
+        import androidx.recyclerview.widget.LinearLayoutManager
+        import androidx.recyclerview.widget.RecyclerView
+        import com.google.android.material.button.MaterialButton
+        import com.google.android.material.textview.MaterialTextView
+        import com.modcom.medilabsapp.adapters.LabTestsCartAdapter
+        import com.modcom.medilabsapp.helpers.SQLiteCartHelper
+        
+        class MyCart : AppCompatActivity() {
+        override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_my_cart)
+        //put total cost in a textview
+        val helper = SQLiteCartHelper(applicationContext)
+        val checkout = findViewById<MaterialButton>(R.id.checkout)
+        
+                //Access SQLite helper, to check the totalCOst, Its zero remove the checkout button
+                if (helper.totalCost() == 0.0){
+                    checkout.visibility = View.GONE
+                }//end
+        
+        
+                val total = findViewById<MaterialTextView>(R.id.total)
+                //Put the total in its text View
+                total.text = "Total: "+helper.totalCost()
+        
+                //Find recycler
+                val recycler = findViewById<RecyclerView>(R.id.recycler)
+                //Set Layout
+                recycler.layoutManager = LinearLayoutManager(applicationContext)
+                recycler.setHasFixedSize(true)
+                
+                //If total items from SQLite helper is zero, show cart is empty
+                if(helper.getNumItems() == 0){
+                    Toast.makeText(applicationContext, "Your Cart is Empty",
+                        Toast.LENGTH_SHORT).show()
+                }
+                else {
+                    //Access adapter and provide it with  data using getAllItems
+                    val adapter = LabTestsCartAdapter(applicationContext)
+                    adapter.setListItems(helper.getAllItems())//pass data
+                    recycler.adapter = adapter //link adapter to recycler
+                }
+            }
+           
+            //To Add More Functions Here
+
+        }//end
+
+At this point we can test the MyCart Activity if its displaying.
+
+### Step 5
+Next we need to create a cart icon at the Options Menu. 
+#### What are Options Menu in Android.
+Android Option Menus are the primary menus of android. They can be used for settings, searching, deleting items, etc. When and how this item should appear as an action item in the app bar is decided by the Show Action attribute <br>
+Options menu show in the Top/Tool Bar, see below image
+
+![img_11.png](img_11.png)
+
+Next we create an Options Menu, In res/layout  create a file named design and write below code.
+
+
+        <?xml version="1.0" encoding="utf-8"?>
+        <FrameLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:clipToPadding="false"
+        android:focusable="true">
+        
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/cart"
+                android:id="@+id/image"
+                android:layout_gravity="center"
+               />
+        
+            <TextView
+                android:layout_width="18dp"
+                android:text="3"
+                android:id="@+id/badge"
+                android:textStyle="bold"
+                android:layout_gravity="top|end"
+                android:textColor="#2196F3"
+                android:background="@drawable/shape1"
+                android:layout_marginTop="-4dp"
+                android:layout_marginEnd="-4dp"
+                android:gravity="center"
+                android:textSize="11sp"
+                android:layout_height="18dp"/>
+        
+        </FrameLayout>
+
+
+Then is res/menu, Create a file named main.xml and write below code, this code code Put the design.xml on the Options Menu.
+
+    <?xml version="1.0" encoding="utf-8"?>
+    <menu xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+        <item
+            android:id="@+id/mycart"
+            app:showAsAction="always"
+            android:title="My Cart"
+            android:actionLayout="@layout/design"
+    
+            />
+    </menu>
+
+This is how it Looks Like
+
+![img_12.png](img_12.png)
+
+### Step 6
+We need to make the shopping Cart icon on the options menu, Clickable and Link to MyCart Activity.
+in MainActivity.kt add this function.
+    
+       override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+            menuInflater.inflate(R.menu.main, menu) // Access main.xml
+            val item: MenuItem = menu!!.findItem(R.id.mycart) //find my cart item
+            item.setActionView(R.layout.design) //load the design
+            val actionView: View? = item.actionView
+
+            //Access the views in design XML
+            val number = actionView?.findViewById<TextView>(R.id.badge)
+            val image = actionView?.findViewById<ImageView>(R.id.image)
+            //If image is clicked, Link to MyCart
+            image?.setOnClickListener {
+                startActivity(Intent(applicationContext, MyCart::class.java))
+            }
+            //load the number of items in Cart icon
+            val helper = SQLiteCartHelper(applicationContext)
+            number?.text = ""+helper.getNumItems()
+            return super.onCreateOptionsMenu(menu) //show options menu
+        }
+
+
+Run Your Application and Observe the shopping Cart icon on Options menu. Click on it and it Takes you to MyCart
+
+<p float="left">
+   <img src="img_13.png" width="250"/> <img src="img_14.png" width="250"/>  
+</p>
+
+
+Next Steps is to Make sure that when a user is in MyCart Activity and Clicks on the Back button , they are directed back to MainActivity.
+Add below function in MyCart Activity.
+
+       override fun onBackPressed() {
+            val i = Intent(applicationContext, MainActivity::class.java)
+            startActivity(i)
+            finishAffinity()
+       }
+
+
+finishAffinity()    - This Clears the running/Open Activities(including MyCart) and Goes back to MainActivity.
+
+### Step 7
+Now your Cart is Ready. To finalize the Cart, We need to add Clear All Items and remove One Item from the cart.
+
+We will do these functionalities in our MyCart Activity - Options Menu
+
+In res/menu, Create a File named cart.xml, and write below code.
+
+    <?xml version="1.0" encoding="utf-8"?>
+    <menu xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+       <item
+           android:id="@+id/clearcart"
+           app:showAsAction="always"
+           android:title="Clear Cart"
+           android:icon="@android:drawable/ic_delete"/>
+    
+        <item
+            android:id="@+id/backtoLabs"
+            app:showAsAction="never"
+            android:title="Back"
+            />
+    
+        <item
+            android:id="@+id/login"
+            app:showAsAction="never"
+            android:title="Login"
+            />
+    
+    </menu>
+
+
+Above code creates an Options Menu Like below
+
+![img_15.png](img_15.png)
+
+In MyCart.kt add below function that Loads the Options Menu in the Tool Bar.
+
+       //Activate Options menu
+        override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+            //Below code Loads the cart XML
+            menuInflater.inflate(R.menu.cart, menu)
+            return super.onCreateOptionsMenu(menu) //Creates an Options Menu
+        }
+
+
+Then add below functions to make the Options Menu Clickable.
+
+           override fun onOptionsItemSelected(item: MenuItem): Boolean {
+                //Below code makes id clear cart clickablea and clears the cart using helper.clearCart()
+                if (item.itemId == R.id.clearcart){
+                    val helper = SQLiteCartHelper(applicationContext)
+                    helper.clearCart()
+                }
+                //backtoLabs takes us back to MainActivity
+                if (item.itemId == R.id.backtoLabs){
+                    startActivity(Intent(applicationContext, MainActivity::class.java))
+                }
+        
+                return super.onOptionsItemSelected(item)
+            }
+
+
+Go to SQLiteHelper and reload the MyCart Activity in clearCart() fun.
+
+        //Clear all records
+        fun clearCart(){
+            val db = this.writableDatabase
+            db.delete("cart", null, null)
+            println("Cart Cleared")
+            Toast.makeText(context, "Cart Cleared", Toast.LENGTH_SHORT).show()
+            //Reload the MyCart Activity
+            val i = Intent(context, MyCart::class.java)
+            i.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            context.startActivity(i)
+        } //end
+
+Run Your Project.  Clear the Cart Using the the Options menu with icon (X).
+
+<p float="left">
+   <img src="img_14.png" width="250"/>  
+</p>
+
+### Step 8
+Finally, We do the remove individual items from the Cart.
+In adapters Package, Open LabTestsCartAdapter.kt, in onBindViewHolder Update the remove Button Click Listener as below
+
+
+            val remove = holder.itemView.findViewById<MaterialButton>(R.id.remove)
+            remove.setOnClickListener {
+                //Get the clicked item ID
+                val test_id = item.test_id
+                //Access helper and provide the id to clearCartById() function
+                val helper = SQLiteCartHelper(context)
+                helper.clearCartById(test_id)
+                //The Item is Removed.
+                //Go to Helper and reload the MyCart Activity in clearCartById fun
+            }
+
+
+Go to SQLiteHelper and reload the MyCart Activity in clearCartById() fun.
+          
+         //Remove One Item
+         fun clearCartById(test_id: String){
+               val db = this.writableDatabase
+               //Provide the test_id when deleting
+               db.delete("cart", "test_id=?", arrayOf(test_id))
+                println("Item Id $test_id Removed")
+                Toast.makeText(context, "Item Id $test_id Removed", Toast.LENGTH_SHORT).show()
+                //Reload the MyCart Activity
+                val i = Intent(context, MyCart::class.java)
+                i.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                context.startActivity(i)
+        }//end
+
+
+Now you can your Comple Shopping Cart!
+<p float="left">
+   <img src="img_13.png" width="250"/> <img src="img_14.png" width="250"/>  
+</p>

@@ -63,16 +63,18 @@ class MyCart : AppCompatActivity() {
 
     //Activate Options menu
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        //Below code Loads the cart XML
         menuInflater.inflate(R.menu.cart, menu)
-        return super.onCreateOptionsMenu(menu)
+        return super.onCreateOptionsMenu(menu) //Creates an Options Menu
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        //Below code makes id clear cart clickablea and clears the cart using helper.clearCart()
         if (item.itemId == R.id.clearcart){
             val helper = SQLiteCartHelper(applicationContext)
             helper.clearCart()
         }
-
+        //backtoLabs takes us back to MainActivity
         if (item.itemId == R.id.backtoLabs){
             startActivity(Intent(applicationContext, MainActivity::class.java))
         }
@@ -84,7 +86,6 @@ class MyCart : AppCompatActivity() {
         val i = Intent(applicationContext, MainActivity::class.java)
         startActivity(i)
         finishAffinity()
-
     }
 
 }//last

@@ -52,19 +52,14 @@ class LabTestsCartAdapter(var context: Context):
             //Go to Helper and reload the MyCart Activity in clearCartById fun
         }
 
-       // Toast.makeText(context, "yyy"+item.test_cost, Toast.LENGTH_SHORT).show()
+
     }
 
     override fun getItemCount(): Int {
         return itemList.size  //Count how may Items in the List
     }
 
-    //This is for filtering data
-    fun filterList(filterList: List<LabTests>){
-        itemList = filterList
-        notifyDataSetChanged()
-    }
-
+    //No need to filter the data, Its Just a shopping Cart
 
     //Earlier we mentioned item List is empty!
     //We will get data from our APi, then bring it to below function

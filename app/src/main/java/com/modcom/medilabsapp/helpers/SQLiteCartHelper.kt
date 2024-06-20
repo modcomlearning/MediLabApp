@@ -83,9 +83,9 @@ class SQLiteCartHelper(context: Context):
        db.delete("cart", "test_id=?", arrayOf(test_id))
         println("Item Id $test_id Removed")
         Toast.makeText(context, "Item Id $test_id Removed", Toast.LENGTH_SHORT).show()
-//        val i = Intent(context, MyCart::class.java)
-//        i.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-//        context.startActivity(i)
+        val i = Intent(context, MyCart::class.java)
+        i.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        context.startActivity(i)
    }//end
 
 

@@ -190,18 +190,21 @@ class MainActivity : AppCompatActivity() {
 
     //Start
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.main, menu)
-        val item: MenuItem = menu!!.findItem(R.id.mycart)
-        item.setActionView(R.layout.design)
+        menuInflater.inflate(R.menu.main, menu) // Access main.xml
+        val item: MenuItem = menu!!.findItem(R.id.mycart) //find my cart item
+        item.setActionView(R.layout.design) //load the design
         val actionView: View? = item.actionView
+        //Access the views in design XML
         val number = actionView?.findViewById<TextView>(R.id.badge)
         val image = actionView?.findViewById<ImageView>(R.id.image)
+        //If image is clicked, Link to MyCart
         image?.setOnClickListener {
             startActivity(Intent(applicationContext, MyCart::class.java))
         }
+        //load the number of items in Cart icon
         val helper = SQLiteCartHelper(applicationContext)
         number?.text = ""+helper.getNumItems()
-        return super.onCreateOptionsMenu(menu)
+        return super.onCreateOptionsMenu(menu) //show options menu
     }
     //End
 }

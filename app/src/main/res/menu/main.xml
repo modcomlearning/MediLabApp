@@ -6,6 +6,5 @@
         app:showAsAction="always"
         android:title="My Cart"
         android:actionLayout="@layout/design"
-
         />
 </menu>
