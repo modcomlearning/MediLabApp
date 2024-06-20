@@ -36,3 +36,54 @@
 
 
 </LinearLayout>
+
+
+
+
+<!--    <?xml version="1.0" encoding="utf-8"?>-->
+<!--<FrameLayout-->
+<!--xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--xmlns:app="http://schemas.android.com/apk/res-auto"-->
+<!--xmlns:tools="http://schemas.android.com/tools"-->
+<!--android:layout_width="match_parent"-->
+<!--android:layout_height="match_parent"-->
+<!--tools:context=".MyCart"-->
+<!--android:padding="10dp">-->
+
+<!--<LinearLayout-->
+<!--    android:layout_width="match_parent"-->
+<!--    android:layout_height="match_parent"-->
+<!--    android:orientation="vertical">-->
+
+<!--    <com.google.android.material.textview.MaterialTextView-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="Total: 2300 KES"-->
+<!--        android:textSize="30sp"-->
+<!--        android:textAlignment="textEnd"-->
+<!--        android:textColor="#FF9800"-->
+<!--        android:layout_margin="10dp"-->
+<!--        android:id="@+id/total"/>-->
+
+<!--    <androidx.recyclerview.widget.RecyclerView-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="0dp"-->
+<!--        android:layout_weight="1"-->
+<!--        tools:listitem="@layout/single_labtests_cart"-->
+<!--        android:id="@+id/recycler"/>-->
+<!--</LinearLayout>-->
+
+<!--<com.google.android.material.button.MaterialButton-->
+<!--    android:layout_width="wrap_content"-->
+<!--    android:layout_height="wrap_content"-->
+<!--    android:text="Checkout"-->
+<!--    android:padding="10dp"-->
+<!--    android:textStyle="bold"-->
+<!--    android:backgroundTint="#8BC34A"-->
+<!--    android:layout_margin="10dp"-->
+<!--    android:layout_gravity="end|bottom"-->
+<!--    android:id="@+id/checkout"/>-->
+<!--</FrameLayout>-->
+
+
+

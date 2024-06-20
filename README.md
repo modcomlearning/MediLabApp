@@ -2416,7 +2416,811 @@ Go to SQLiteHelper and reload the MyCart Activity in clearCartById() fun.
         }//end
 
 
-Now you can your Comple Shopping Cart!
+Now you can run the App and Observe the Complete shopping Cart!
 <p float="left">
    <img src="img_13.png" width="250"/> <img src="img_14.png" width="250"/>  
 </p>
+
+## Part 4
+In the Previous part, we have seen how the shopping Cart works, In this Part, we will do a Registration Page to Sign Up user of our application <br>
+The sign up is necessary in this app because users need to create an account before they Checkout.
+<br>
+### Step 1
+In Main Package, Create an activity named SignUpActivity. <br>
+In res/layout/activity_sign_up.xml write below code
+
+       <?xml version="1.0" encoding="utf-8"?>
+        <ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        
+        <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_margin="10dp"
+        android:layout_height="match_parent"
+        tools:context=".SignUpActivity">
+        <com.google.android.material.textview.MaterialTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Create an Account"
+        android:textStyle="bold"
+        android:textSize="30sp"
+        android:fontFamily="@font/montserrat"
+        android:textColor="@color/black"
+        />
+        
+               <com.google.android.material.textfield.TextInputLayout
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:layout_marginTop="10dp"
+                   android:hint="Your Surname">
+        
+                   <com.google.android.material.textfield.TextInputEditText
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content"
+                       android:inputType="textPersonName"
+                       android:id="@+id/surname"/>
+        
+               </com.google.android.material.textfield.TextInputLayout>
+        
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:hint="Your Others">
+        
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPersonName"
+                    android:id="@+id/others"/>
+        
+            </com.google.android.material.textfield.TextInputLayout>
+        
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:hint="Your Email">
+        
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textEmailAddress"
+                    android:id="@+id/email"/>
+        
+            </com.google.android.material.textfield.TextInputLayout>
+        
+        
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:hint="Your Phone">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="phone"
+                    android:id="@+id/phone"/>
+            </com.google.android.material.textfield.TextInputLayout>
+        
+        
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:hint="Your Password">
+        
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword"
+                    android:id="@+id/password"/>
+        
+            </com.google.android.material.textfield.TextInputLayout>
+        
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:hint="Confirm Password">
+        
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword"
+                    android:id="@+id/confirm"/>
+        
+            </com.google.android.material.textfield.TextInputLayout>
+        
+            <RadioGroup
+                android:id="@+id/radioGroupGender"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/radioMale"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Male"
+                    />
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/radioFemale"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Female"
+                    />
+            </RadioGroup>
+        
+            <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <com.google.android.material.button.MaterialButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="DOB"
+            android:id="@+id/buttonDatePicker"/>
+            
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Date here"
+                    android:enabled="false"
+                    android:id="@+id/editTextDate"/>
+            </LinearLayout>
+            
+            <!--spinner-->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+            
+                    <Spinner
+                        android:id="@+id/spinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+            
+                    <TextView
+                        android:id="@+id/selectedItemText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Selected Item: " />
+            
+                </LinearLayout>
+            
+            
+                <com.google.android.material.button.MaterialButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Create Account"
+                    android:id="@+id/create"/>
+            
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Already have an Account, Login"
+                    android:padding="20dp"
+                    android:textStyle="bold"
+                    android:textColor="#3F51B5"
+                    android:id="@+id/linktologin"/>
+            
+            </LinearLayout>
+        </ScrollView>
+
+### Step 2
+In SignUpActivity.kt, write below code.
+
+        package com.modcom.medilabsapp
+        import android.app.DatePickerDialog
+        import android.content.Intent
+        import androidx.appcompat.app.AppCompatActivity
+        import android.os.Bundle
+        import android.view.View
+        import android.widget.*
+        import com.google.android.material.button.MaterialButton
+        import com.google.android.material.textfield.TextInputEditText
+        import com.google.android.material.textview.MaterialTextView
+        import com.google.gson.GsonBuilder
+        import com.modcom.medilabsapp.constants.Constants
+        import com.modcom.medilabsapp.helpers.ApiHelper
+        import com.modcom.medilabsapp.models.Locations
+        import org.json.JSONArray
+        import org.json.JSONObject
+        import java.text.SimpleDateFormat
+        import java.util.*
+        
+        class SignUpActivity : AppCompatActivity() {
+        private lateinit var buttonDatePicker: Button
+        private lateinit var editTextDate: EditText
+        private lateinit var spinner: Spinner
+        private lateinit var selectedItemText: TextView
+        private lateinit var locations: List<Locations>
+        override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_sign_up)
+        //link to Login while in Register.
+        val linktologin = findViewById<MaterialTextView>(R.id.linktologin)
+        linktologin.setOnClickListener {
+        startActivity(Intent(applicationContext, SignInActivity::class.java))
+        }
+        
+                buttonDatePicker = findViewById(R.id.buttonDatePicker)
+                editTextDate = findViewById(R.id.editTextDate)
+        
+                buttonDatePicker.setOnClickListener {
+                    //First create below function
+                    showDatePickerDialog()
+                }//end onclick
+        
+                //Spinner
+                spinner = findViewById(R.id.spinner)
+                selectedItemText = findViewById(R.id.selectedItemText)
+                // Sample data for the spinner
+        
+                //Fetch Locations and Bring them here
+                val helper = ApiHelper(applicationContext)
+                val body = JSONObject()
+                //Access the /locations End point
+                val api = Constants.BASE_URL+"/locations"
+                helper.post(api, body,object: ApiHelper.CallBack{
+                    override fun onSuccess(result: JSONArray?) {
+                        //JSON Array Is Returned - Locations
+                            // Convert JSONArray to ArrayList<Locations>
+                            val gson = GsonBuilder().create()
+                            locations = gson.fromJson(result.toString(),
+                                Array<Locations>::class.java).toList()
+        
+                        val locationNames = locations.map { it.location }
+        
+                        val adapter = ArrayAdapter(applicationContext,
+                            android.R.layout.simple_spinner_item, locationNames)
+                        // Specify the layout to use when the list of choices appears
+                        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                        // Set the adapter to the spinner
+                        spinner.adapter = adapter
+                    }
+        
+                    override fun onSuccess(result: JSONObject?) {
+                       //JSON Object for No Locations
+        
+                    }
+        
+                    override fun onFailure(result: String?) {
+        
+                    }
+                })//end
+                //val data: List<String> = listOf("1", "2", "3", "4", "5")// pending
+                // Create an ArrayAdapter using the sample data
+        
+                //Check the selected location
+                var location_id = ""
+                spinner.onItemSelectedListener = object :AdapterView.OnItemSelectedListener{
+                    override fun onItemSelected(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
+                        val selectedLocation = locations[position]
+                        location_id = selectedLocation.location_id
+                    }
+        
+                    override fun onNothingSelected(p0: AdapterView<*>?) {
+                        Toast.makeText(applicationContext,
+                            "Please Select a location", Toast.LENGTH_SHORT).show()
+                    }
+                }//end
+        
+                val create = findViewById<MaterialButton>(R.id.create)
+                create.setOnClickListener {  //where do we close it?
+                    //Push/Post data to APi.
+                    val surname = findViewById<TextInputEditText>(R.id.surname)
+                    val others = findViewById<TextInputEditText>(R.id.others)
+                    val email = findViewById<TextInputEditText>(R.id.email)
+                    val phone = findViewById<TextInputEditText>(R.id.phone)
+                    val password = findViewById<TextInputEditText>(R.id.password)
+                    val confirm = findViewById<TextInputEditText>(R.id.confirm)
+                    val female = findViewById<RadioButton>(R.id.radioFemale)
+                    val male = findViewById<RadioButton>(R.id.radioMale)
+        
+                    //handle radio buttons
+                    var gender = "N/A"
+                    if (female.isChecked) {
+                        gender = "Female"
+                    }
+                    if (male.isChecked) {
+                        gender = "Male"
+                    }
+                    //check if passwords are matching
+                    if (password.text.toString() != confirm.text.toString()) {
+                        Toast.makeText(
+                            applicationContext, "Password Not Matching",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } else {
+                        //Post data to /member_signup API
+                        val api = Constants.BASE_URL+"/member_signup"
+                        val helper = ApiHelper(applicationContext)
+                        val body = JSONObject()
+                        body.put("surname", surname.text.toString())
+                        body.put("others", others.text.toString())
+                        body.put("email", email.text.toString())
+                        body.put("phone", phone.text.toString())
+                        body.put("dob", editTextDate.text.toString())
+                        body.put("password", password.text.toString())
+                        body.put("gender", gender)
+                        body.put("location_id", location_id)
+                        body.put("status", "TRUE")
+        
+        
+                        helper.post(api, body, object : ApiHelper.CallBack {
+                            override fun onSuccess(result: JSONArray?) {
+                            }
+        
+                            override fun onSuccess(result: JSONObject?) {
+                                //Posted successfully
+                                Toast.makeText(applicationContext, result.toString(),
+                                    Toast.LENGTH_SHORT).show()
+                            }
+        
+                            override fun onFailure(result: String?) {
+                                //Failed to post
+                                Toast.makeText(applicationContext, result.toString(),
+                                    Toast.LENGTH_SHORT).show()
+                            }
+                        });
+        
+                    }//end
+                }//here inside oncreate, closes on click
+            }//end oncreate
+        
+            //other functions- Date Picker function
+            private fun showDatePickerDialog() {
+                val calendar = Calendar.getInstance()
+                // Create a date picker dialog and set the current date as the default selection
+                val datePickerDialog = DatePickerDialog(
+                    this,
+                    { _: DatePicker, year: Int, month: Int, day: Int ->
+                        val selectedDate = formatDate(year, month, day)
+                        editTextDate.setText(selectedDate)
+                    },
+                    calendar.get(Calendar.YEAR),
+                    calendar.get(Calendar.MONTH),
+                    calendar.get(Calendar.DAY_OF_MONTH)
+                )
+                // Show the date picker dialog, user cannot pick tomorrow
+                datePickerDialog.datePicker.maxDate = System.currentTimeMillis() - 568080000000;
+                datePickerDialog.show()
+            }
+        
+            //Date conversion
+            private fun formatDate(year: Int, month: Int, day: Int): String {
+                val calendar = Calendar.getInstance()
+                calendar.set(year, month, day)
+                val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                return dateFormat.format(calendar.time)
+            }
+        }//end class
+        
+
+
+Test Your Sign Up Activity.
+
+![img_16.png](img_16.png)
+
+### Step 3
+Before doing the SIgnInActivity, we will need to use shared prefferences to store our user data.
+In helpers package, Create a Kotlin Class File named PrefsHelper.kt and write below code<br>
+
+        package com.modcom.medilabsapp.helpers
+
+        import android.content.Context
+        import android.content.SharedPreferences
+        import android.content.SharedPreferences.Editor
+        
+        //Shared preferences are used to values in a Key - value Approach
+        class PrefsHelper {
+        companion object{
+                //Save to Preferences
+                fun savePrefs(context: Context, key: String, value:String){
+                    val pref: SharedPreferences = context.getSharedPreferences("store",
+                    Context.MODE_PRIVATE)
+                    val editor = pref.edit()
+                    editor.putString(key, value)
+                    editor.apply()
+                }//end save
+        
+                //Get from Preferences
+                fun getPrefs(context: Context, key: String) : String{
+                    val pref: SharedPreferences = context.getSharedPreferences("store",
+                        Context.MODE_PRIVATE)
+                    val value = pref.getString(key, "")//key is empty or not exist return empty
+                    return value.toString()
+                }//end get
+        
+                //Remove an Item from Preferences
+                fun clearPrefsByKey(context: Context, key: String){
+                    val pref: SharedPreferences = context.getSharedPreferences("store",
+                        Context.MODE_PRIVATE)
+                    val editor = pref.edit()
+                    editor.remove(key)
+                    editor.apply()
+                }//end
+        
+                //Clear All from Preferences
+                fun clearPrefs(context: Context){
+                    val pref: SharedPreferences = context.getSharedPreferences("store",
+                        Context.MODE_PRIVATE)
+                    val editor = pref.edit()
+                    editor.clear()
+                    editor.apply()
+                }
+        
+            }//end companion
+        }//end class
+
+
+Above Helper will be used to Save, Get and Delete data from Shared Preferences
+
+### Step 4
+Next we do the sign in Activity.
+In Main Package, Create a New Empty Views Activity named SignInActivity.kt
+
+in res/layout/activity_sign_in.xml write below code.
+        
+            <?xml version="1.0" encoding="utf-8"?>
+            <ScrollView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:orientation="vertical"
+                    android:layout_margin="10dp"
+                    android:layout_height="match_parent"
+                    tools:context=".SignInActivity">
+                    <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Login Account"
+                        android:textStyle="bold"
+                        android:textSize="30sp"
+                        android:fontFamily="@font/montserrat"
+                        android:textColor="@color/black"
+                        />
+            
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:hint="Your Surname">
+            
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textPersonName"
+                            android:id="@+id/surname"/>
+
+                    </com.google.android.material.textfield.TextInputLayout>
+            
+            
+            
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:hint="Your Password">
+            
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textPassword"
+                            android:id="@+id/password"/>
+            
+                    </com.google.android.material.textfield.TextInputLayout>
+            
+            
+            
+                    <com.google.android.material.button.MaterialButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Login Account"
+                        android:id="@+id/login"/>
+            
+                    <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Don't have an Account, Create"
+                        android:padding="20dp"
+                        android:textStyle="bold"
+                        android:textColor="#3F51B5"
+                        android:id="@+id/linktoregister"/>
+            
+                </LinearLayout>
+            </ScrollView>
+
+
+
+In SignInActivity.kt write below login code.
+
+            package com.modcom.medilabsapp
+
+            import android.content.Intent
+            import androidx.appcompat.app.AppCompatActivity
+            import android.os.Bundle
+            import android.widget.Toast
+            import com.google.android.material.button.MaterialButton
+            import com.google.android.material.textfield.TextInputEditText
+            import com.google.android.material.textview.MaterialTextView
+            import com.modcom.medilabsapp.constants.Constants
+            import com.modcom.medilabsapp.helpers.ApiHelper
+            import com.modcom.medilabsapp.helpers.PrefsHelper
+            import org.json.JSONArray
+            import org.json.JSONObject
+            
+            class SignInActivity : AppCompatActivity() {
+            override fun onCreate(savedInstanceState: Bundle?) {
+            super.onCreate(savedInstanceState)
+            setContentView(R.layout.activity_sign_in)
+            
+                    //link to register while in Login.
+                    val linktoregister = findViewById<MaterialTextView>(R.id.linktoregister)
+                    linktoregister.setOnClickListener {
+                        startActivity(Intent(applicationContext, SignUpActivity::class.java))
+                    }
+            
+                    //Find Views
+                    val surname = findViewById<TextInputEditText>(R.id.surname)
+                    val password = findViewById<TextInputEditText>(R.id.password)
+            
+                    val login = findViewById<MaterialButton>(R.id.login)
+                    login.setOnClickListener {
+                        //Specify the /member_signin" Endpoint
+                        val api = Constants.BASE_URL+"/member_signin"
+                        val helper = ApiHelper(applicationContext)
+                        //Create a JSON Object of email and Password
+                        val body = JSONObject()
+                        //Use Email Edit Text
+                        body.put("email", surname.text.toString())
+                        body.put("password", password.text.toString())
+                        helper.post(api, body, object : ApiHelper.CallBack {
+                            override fun onSuccess(result: JSONArray?) {
+                            }
+            
+                            override fun onSuccess(result: JSONObject?) {
+                                //Consume the JSON - access keys
+                                //Check if access_token exist in response
+                                if (result!!.has("access_token")){
+                                    //Access token Found, Login Success
+                                    //access the access token and member from the JSOn returned
+                                    val access_token = result.getString("access_token")
+                                    val member = result.getString("member")// {} Object user details
+            
+                                    //Toast a success message
+                                    Toast.makeText(applicationContext, "Success",
+                                        Toast.LENGTH_SHORT).show()
+            
+                                    //Save access Token to Shared Prefs
+                                    PrefsHelper.savePrefs(applicationContext,
+                                        "access_token", access_token)
+            
+                                    //convert member to an Object
+                                    val memberObject = JSONObject(member)
+                                    val member_id = memberObject.getString("member_id")
+                                    val email = memberObject.getString("email")
+                                    val surname = memberObject.getString("surname")
+            
+                                    //save member, member_id, email, surname to Shared Prefs
+                                    PrefsHelper.savePrefs(applicationContext,
+                                        "userObject", member)
+            
+                                    PrefsHelper.savePrefs(applicationContext,
+                                        "member_id", member_id)
+            
+                                    PrefsHelper.savePrefs(applicationContext,
+                                        "email", email)
+            
+                                    PrefsHelper.savePrefs(applicationContext,
+                                        "surname", surname)
+            
+                                    //redirect to MainActivity upon successful Login
+                                    startActivity(Intent(applicationContext, MainActivity::class.java))
+                                    finishAffinity()
+                                    
+                                }
+                                else {
+                                    //No access token Found , Login Failed
+                                    Toast.makeText(applicationContext, result.toString(),
+                                        Toast.LENGTH_SHORT).show()
+                                }
+                            }
+            
+                            override fun onFailure(result: String?) {
+                                //Fails to Connect
+                                Toast.makeText(applicationContext, result.toString(),
+                                    Toast.LENGTH_SHORT).show()
+                            }
+            
+                        });
+            
+                    }//end listener
+                }//end oncreate
+            }//end class
+
+
+To test the SignInActivity, Open MyCart Activity and handle The checkout button Listener Like Below
+
+             checkout.setOnClickListener {
+                //Using Prefs check if token exists
+                 val token = PrefsHelper.getPrefs(applicationContext, "access_token")
+                 if (token.isEmpty()){
+                     //Token does not exist, meaning Not Logged In
+                     Toast.makeText(applicationContext, "Not Logged In",
+                         Toast.LENGTH_SHORT).show()
+                     startActivity(Intent(applicationContext, SignInActivity::class.java))
+                     finish()
+                 }
+                else {
+                         //Token Exists, meaning Logged In we Go to Next step
+                         startActivity(Intent(applicationContext, CheckoutStep1::class.java))
+                         Toast.makeText(applicationContext, "Logged In", Toast.LENGTH_SHORT).show()
+                     }
+                }//end
+
+
+Test Your SignInActivity. Add Items to shopping cart and press the Checkout Button <br>
+
+![img_17.png](img_17.png)
+
+## Step 5
+Finally, we need to update the MainActivity to detect if user is logged or Not and Update the UI accordingly.
+in activity_main.xml update by adding 3 more buttons namely sign in, signout, profile and a user TextView as shown below
+
+        <?xml version="1.0" encoding="utf-8"?>
+        <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context=".MainActivity">
+        
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Guest"
+                android:padding="5dp"
+                android:id="@+id/user"
+                android:textStyle="bold"/>
+        
+            <com.google.android.material.button.MaterialButton
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:textSize="11sp"
+                android:text="Sign In"
+                android:layout_marginStart="5dp"
+                android:id="@+id/signin"/>
+        
+            <com.google.android.material.button.MaterialButton
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:textSize="11sp"
+                android:text="Sign Out"
+                android:layout_marginStart="5dp"
+                android:id="@+id/signout"/>
+        
+            <com.google.android.material.button.MaterialButton
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:textSize="11sp"
+                android:text="Profile"
+                android:layout_marginStart="5dp"
+                android:id="@+id/profile"/>
+        
+        
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Search Lab name.."
+                android:drawableStart="@android:drawable/ic_menu_search"
+                android:layout_margin="5dp"
+                android:id="@+id/etsearch"/>
+            <ProgressBar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="3dp"
+                android:id="@+id/progress"/>
+        
+        
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/swipeRefreshLayout">
+        
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:listitem="@layout/single_lab"/>
+        
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+        </LinearLayout>
+
+
+Then in MainActivity.kt add the following function
+
+             fun update(){
+                     //Find Views By ID
+                     val user = findViewById<MaterialTextView>(R.id.user)
+                     val signin = findViewById<MaterialButton>(R.id.signin)
+                     val signout = findViewById<MaterialButton>(R.id.signout)
+                     val profile = findViewById<MaterialButton>(R.id.profile)
+                     
+                     //Set below 3 Views to GONE/Disappear
+                     signin.visibility = View.GONE
+                     signout.visibility = View.GONE
+                     profile.visibility = View.GONE
+            
+                     //Access user access token from Prefs
+                     val token = PrefsHelper.getPrefs(applicationContext, "access_token")
+                     if (token.isEmpty()){
+                         //If user Token does  not exist, Update user TextView with Not Logged In
+                         user.text = "Not Logged In"
+                         //Make sign in button visible
+                         signin.visibility = View.VISIBLE
+                         signin.setOnClickListener {
+                             //Link to Sign in Activity
+                             startActivity(Intent(applicationContext, SignInActivity::class.java))
+                         }
+                     }
+                     else{
+                         //If user Token  exist, 
+                         //Make Profile Button visible
+                         profile.visibility = View.VISIBLE
+                         profile.setOnClickListener {
+                             //Link to Member Profile TODO Later
+                            startActivity(Intent(applicationContext, MemberProfile::class.java))
+                         }//end
+                         
+                         //Access username from Prefs
+                         val surname = PrefsHelper.getPrefs(applicationContext, "surname")
+                         //Update user textView with Logged in User
+                         user.text = "Welcome $surname"
+                         //Make signout button visble
+                         signout.visibility = View.VISIBLE
+                         //Link to PrefHelper and Clear Prefs
+                         signout.setOnClickListener{
+                             PrefsHelper.clearPrefs(applicationContext)
+                             startActivity(intent)
+                             finishAffinity()
+                         }
+                     }
+             }//end
+
+
+
+In the same file MainActivity.kt, under onCreate() Function, Call the Update Function like below.
+            
+            .....
+            override fun onCreate(savedInstanceState: Bundle?) {
+                super.onCreate(savedInstanceState)
+                setContentView(R.layout.activity_main)
+
+                update()
+            .....
+
+Run your application, Signin to the App and Observe the MainActivity.
+<br>
+Screenshot before Login<br>
+
+<img src="img_18.png" width="250"/>
+
+
+Screenshot after Login.
+<img src="img_19.png" width="250"/>

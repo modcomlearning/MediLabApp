@@ -40,31 +40,45 @@ class MainActivity : AppCompatActivity() {
      lateinit var swiperefresh: SwipeRefreshLayout
 
      fun update(){
+         //Find Views By ID
          val user = findViewById<MaterialTextView>(R.id.user)
          val signin = findViewById<MaterialButton>(R.id.signin)
          val signout = findViewById<MaterialButton>(R.id.signout)
          val profile = findViewById<MaterialButton>(R.id.profile)
+
+         //Set below 3 Views to GONE/Disappear
          signin.visibility = View.GONE
          signout.visibility = View.GONE
          profile.visibility = View.GONE
 
+         //Access user access token from Prefs
          val token = PrefsHelper.getPrefs(applicationContext, "access_token")
-         if (token.isEmpty()){ //Token not available
+         if (token.isEmpty()){
+             //If user Token does  not exist, Update user TextView with Not Logged In
              user.text = "Not Logged In"
+             //Make sign in button visible
              signin.visibility = View.VISIBLE
              signin.setOnClickListener {
+                 //Link to Sign in Activity
                  startActivity(Intent(applicationContext, SignInActivity::class.java))
              }
          }
-         else{  //token  available
+         else{
+             //If user Token  exist,
+             //Make Profile Button visible
              profile.visibility = View.VISIBLE
              profile.setOnClickListener {
+                 //Link to Member Profile TODO Later
                 startActivity(Intent(applicationContext, MemberProfile::class.java))
              }//end
 
+             //Access username from Prefs
              val surname = PrefsHelper.getPrefs(applicationContext, "surname")
+             //Update user textView with Logged in User
              user.text = "Welcome $surname"
+             //Make signout button visble
              signout.visibility = View.VISIBLE
+             //Link to PrefHelper and Clear Prefs
              signout.setOnClickListener{
                  PrefsHelper.clearPrefs(applicationContext)
                  startActivity(intent)
@@ -187,6 +201,20 @@ class MainActivity : AppCompatActivity() {
             labAdapter.filterList(filteredlist)
         }
     }
+
+
+//    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+//        menuInflater.inflate(R.menu.main, menu)
+//        return super.onCreateOptionsMenu(menu)
+//    }
+//
+//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+//        if (item.itemId == R.id.mycart){
+//            startActivity(Intent(applicationContext, MyCart::class.java))
+//        }
+//        return super.onOptionsItemSelected(item)
+//    }
+
 
     //Start
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

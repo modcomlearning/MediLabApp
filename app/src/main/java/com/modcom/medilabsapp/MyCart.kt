@@ -26,15 +26,17 @@ class MyCart : AppCompatActivity() {
             checkout.visibility = View.GONE
         }//end
         checkout.setOnClickListener {
+            //Using Prefs check if token exists
              val token = PrefsHelper.getPrefs(applicationContext, "access_token")
              if (token.isEmpty()){
+                 //Token does not exist, meaning Not Logged In
                  Toast.makeText(applicationContext, "Not Logged In",
                      Toast.LENGTH_SHORT).show()
                  startActivity(Intent(applicationContext, SignInActivity::class.java))
                  finish()
              }
             else {
-                 //TODO
+                 //Token Exists, meaning Logged In we Go to Next step
                  startActivity(Intent(applicationContext, CheckoutStep1::class.java))
                  Toast.makeText(applicationContext, "Logged In", Toast.LENGTH_SHORT).show()
              }
@@ -52,7 +54,7 @@ class MyCart : AppCompatActivity() {
         //Access adapter and provide it with from getAllItems
         if(helper.getNumItems() == 0){
             Toast.makeText(applicationContext, "Your Cart is Empty",
-                Toast.LENGTH_SHORT).show()
+                Toast.LENGTH_LONG).show()
         }
         else {
             val adapter = LabTestsCartAdapter(applicationContext)

@@ -13,10 +13,4 @@
         android:title="Back"
         />
 
-    <item
-        android:id="@+id/login"
-        app:showAsAction="never"
-        android:title="Login"
-        />
-
 </menu>

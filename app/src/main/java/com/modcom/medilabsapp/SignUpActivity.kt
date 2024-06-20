@@ -12,8 +12,6 @@ import com.google.android.material.textview.MaterialTextView
 import com.google.gson.GsonBuilder
 import com.modcom.medilabsapp.constants.Constants
 import com.modcom.medilabsapp.helpers.ApiHelper
-import com.modcom.medilabsapp.helpers.PrefsHelper
-import com.modcom.medilabsapp.models.Lab
 import com.modcom.medilabsapp.models.Locations
 import org.json.JSONArray
 import org.json.JSONObject
@@ -35,11 +33,11 @@ class SignUpActivity : AppCompatActivity() {
             startActivity(Intent(applicationContext, SignInActivity::class.java))
         }
 
-
         buttonDatePicker = findViewById(R.id.buttonDatePicker)
         editTextDate = findViewById(R.id.editTextDate)
 
         buttonDatePicker.setOnClickListener {
+            //First create below function
             showDatePickerDialog()
         }//end onclick
 
@@ -51,6 +49,7 @@ class SignUpActivity : AppCompatActivity() {
         //Fetch Locations and Bring them here
         val helper = ApiHelper(applicationContext)
         val body = JSONObject()
+        //Access the /locations End point
         val api = Constants.BASE_URL+"/locations"
         helper.post(api, body,object: ApiHelper.CallBack{
             override fun onSuccess(result: JSONArray?) {
@@ -82,11 +81,11 @@ class SignUpActivity : AppCompatActivity() {
         //val data: List<String> = listOf("1", "2", "3", "4", "5")// pending
         // Create an ArrayAdapter using the sample data
 
-
+        //Check the selected location
         var location_id = ""
         spinner.onItemSelectedListener = object :AdapterView.OnItemSelectedListener{
-            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                val selectedLocation = locations[p2]
+            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
+                val selectedLocation = locations[position]
                 location_id = selectedLocation.location_id
             }
 
@@ -108,7 +107,7 @@ class SignUpActivity : AppCompatActivity() {
             val female = findViewById<RadioButton>(R.id.radioFemale)
             val male = findViewById<RadioButton>(R.id.radioMale)
 
-
+            //handle radio buttons
             var gender = "N/A"
             if (female.isChecked) {
                 gender = "Female"
@@ -116,13 +115,14 @@ class SignUpActivity : AppCompatActivity() {
             if (male.isChecked) {
                 gender = "Male"
             }
-
+            //check if passwords are matching
             if (password.text.toString() != confirm.text.toString()) {
                 Toast.makeText(
                     applicationContext, "Password Not Matching",
                     Toast.LENGTH_SHORT
                 ).show()
             } else {
+                //Post data to /member_signup API
                 val api = Constants.BASE_URL+"/member_signup"
                 val helper = ApiHelper(applicationContext)
                 val body = JSONObject()
@@ -142,11 +142,13 @@ class SignUpActivity : AppCompatActivity() {
                     }
 
                     override fun onSuccess(result: JSONObject?) {
+                        //Posted successfully
                         Toast.makeText(applicationContext, result.toString(),
                             Toast.LENGTH_SHORT).show()
                     }
 
                     override fun onFailure(result: String?) {
+                        //Failed to post
                         Toast.makeText(applicationContext, result.toString(),
                             Toast.LENGTH_SHORT).show()
                     }
@@ -156,7 +158,7 @@ class SignUpActivity : AppCompatActivity() {
         }//here inside oncreate, closes on click
     }//end oncreate
 
-    //other functions
+    //other functions- Date Picker function
     private fun showDatePickerDialog() {
         val calendar = Calendar.getInstance()
         // Create a date picker dialog and set the current date as the default selection
@@ -170,17 +172,16 @@ class SignUpActivity : AppCompatActivity() {
             calendar.get(Calendar.MONTH),
             calendar.get(Calendar.DAY_OF_MONTH)
         )
-        // Show the date picker dialog
+        // Show the date picker dialog, user cannot pick tomorrow
         datePickerDialog.datePicker.maxDate = System.currentTimeMillis() - 568080000000;
         datePickerDialog.show()
     }
 
+    //Date conversion
     private fun formatDate(year: Int, month: Int, day: Int): String {
         val calendar = Calendar.getInstance()
         calendar.set(year, month, day)
         val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         return dateFormat.format(calendar.time)
     }
-
-  //justpaste.it/d1lud
 }//end class

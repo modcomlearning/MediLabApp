@@ -125,13 +125,4 @@ class SQLiteCartHelper(context: Context):
         }//end while
         return items
     }//end function
-
-
-
-
-
-
-
-
-
 }
