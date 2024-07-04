@@ -4418,6 +4418,7 @@ Then handle the Proceed button Listener, followed by Radio buttons etc.
                         Toast.makeText(applicationContext, "Empty Fields",
                             Toast.LENGTH_SHORT).show()
                     }
+                
                     else {
                         //Save values collected from Radio button to Preferences
                         PrefsHelper.savePrefs(applicationContext, "date", date)
@@ -4708,12 +4709,269 @@ In CheckoutStep2GPS.kt write below code to retrieve phones GPS and place in Edit
         }//end class
 
 
-in AndroidManifest.xml add below GPS permissions. <br>
-             .....
-             
+In AndroidManifest.xml add below GPS permissions. <br>
+       
             <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
             <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
              .....
+
+Now having done the GPS Part for Step 2, Go back to CheckoutStep1 and locate below code(Found under proceed button Listener) and update this code snippet.
+
+                //Save values collected from Radio button to Preferences
+                PrefsHelper.savePrefs(applicationContext, "date", date)
+                PrefsHelper.savePrefs(applicationContext, "time", time)
+                PrefsHelper.savePrefs(applicationContext, "where_taken", where_taken)
+                PrefsHelper.savePrefs(applicationContext, "booked_for", booked_for)
+                //Check if user Checked Self/Other
+                    if (booked_for=="Self"){
+                        //For Self - Save an Empty depemdant_id to Prefs, Since no dependant
+                        PrefsHelper.savePrefs(applicationContext, "dependant_id", "")
+                        //Proceed to CheckoutStep2GPS
+                        startActivity(Intent(applicationContext, CheckoutStep2GPS::class.java))
+                    }
+                    else {
+                        //For Other - Direct the user to pick a dependant in View Dependants
+                        startActivity(Intent(applicationContext, ViewDependants::class.java))
+                    }//end else  
+
+
+Run Your App, <br> Select booked_for=="Self".  Test the GPS.
+
+After running you notice that you may have challenges when the user did not set the GPS to On earlier before landing to CheckoutStep2GPS. <br>
+To avoid that its important to check if GPS is on before opening CheckoutStep2GPS.
+
+
+In CheckoutStep1, Add this function.
+
+          //justpaste.it/arfi6
+          private fun isLocationEnabled(): Boolean {
+               var locationManager: LocationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+               return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
+                   LocationManager.NETWORK_PROVIDER
+               )
+           }//end
+
+Then Update this code done earlier
+ 
+                PrefsHelper.savePrefs(applicationContext, "date", date)
+                PrefsHelper.savePrefs(applicationContext, "time", time)
+                PrefsHelper.savePrefs(applicationContext, "where_taken", where_taken)
+                PrefsHelper.savePrefs(applicationContext, "booked_for", booked_for)
+                //Check if GPS is enabled 
+                if (isLocationEnabled()) {
+                    //If enabled , Check Status of Booked for is it Self/Away
+                    if (booked_for=="Self"){
+                        //If Self Save Empty Dependant id and proceed to CheckoutStep2GPS
+                        PrefsHelper.savePrefs(applicationContext, "dependant_id", "")
+                        startActivity(Intent(applicationContext, CheckoutStep2GPS::class.java))
+                    }
+                    else {
+                        //Direct the user to pick a dependant in ViewDependants
+                        startActivity(Intent(applicationContext, ViewDependants::class.java))
+                    }//end else
+                }//end if Location enabled
+                else {
+                   // if location not enabled, Take user to Settings to Activate GPS
+                    Toast.makeText(applicationContext, "GPS Is OFF",
+                        Toast.LENGTH_SHORT).show()
+                    startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+                }
+
+
+
+Below is the Full CheckoutStep1.kt
+
+        package com.modcom.medilabsapp
+        import android.app.DatePickerDialog
+        import android.app.TimePickerDialog
+        import android.content.Context
+        import android.content.Intent
+        import android.location.Geocoder
+        import android.location.LocationManager
+        import androidx.appcompat.app.AppCompatActivity
+        import android.os.Bundle
+        import android.provider.Settings
+        import android.util.Log
+        import android.widget.*
+        import com.google.android.gms.maps.model.LatLng
+        import com.google.android.material.button.MaterialButton
+        import com.modcom.medilabsapp.helpers.PrefsHelper
+        import java.text.SimpleDateFormat
+        import java.util.*
+        
+        class CheckoutStep1 : AppCompatActivity() {
+            private lateinit var buttonDatePicker: Button
+            private lateinit var editTextDate: EditText
+            private lateinit var btnTimePicker: Button
+            private lateinit var editTextTime: EditText
+        
+            //This will help show the TimePicker
+            fun showTimePicker(){
+                val calender = Calendar.getInstance()
+                val timePickerDialog = TimePickerDialog(
+                    this,
+                    timeSetListener,
+                    calender.get(Calendar.HOUR_OF_DAY),
+                    calender.get(Calendar.MINUTE),
+                    false)
+                timePickerDialog.show()
+            }//end
+        
+           //https://justpaste.it/cmht0
+           //This code Listens for time selections and place the time in editTextTime
+           private val timeSetListener = TimePickerDialog.OnTimeSetListener{
+                   _, hourOfDay, minute ->
+        
+                val calendar = Calendar.getInstance()  //***********
+                calendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
+                calendar.set(Calendar.MINUTE, minute)
+                val sdf = SimpleDateFormat("hh:mm", Locale.getDefault())
+                val selectedTime = sdf.format(calendar.time)
+                editTextTime.setText(selectedTime)
+            }//end
+        
+        
+           
+            private fun showDatePickerDialog() {
+                val calendar = Calendar.getInstance()
+                // Create a date picker dialog and set the current date as the default selection
+                val datePickerDialog = DatePickerDialog(
+                    this,
+                    { _: DatePicker, year: Int, month: Int, day: Int ->
+                        val selectedDate = formatDate(year, month, day)
+                        editTextDate.setText(selectedDate)
+                    },
+                    calendar.get(Calendar.YEAR),
+                    calendar.get(Calendar.MONTH),
+                    calendar.get(Calendar.DAY_OF_MONTH)
+                )
+                // Show the date picker dialog
+                datePickerDialog.datePicker.minDate = System.currentTimeMillis() - 1000;
+                datePickerDialog.show()
+            }
+        
+        
+            private fun formatDate(year: Int, month: Int, day: Int): String {
+                val calendar = Calendar.getInstance()
+                calendar.set(year, month, day)
+                val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                return dateFormat.format(calendar.time)
+            }
+            //justpaste.it/6l88f
+        
+            override fun onCreate(savedInstanceState: Bundle?) {
+                super.onCreate(savedInstanceState)
+                setContentView(R.layout.activity_checkout_step1)
+        
+                //Click buttonto trigger - showTimePicker()
+                btnTimePicker = findViewById(R.id.btnTimePicker)
+                editTextTime = findViewById(R.id.editTextTime)
+                btnTimePicker.setOnClickListener {
+                    showTimePicker()
+                }//end
+        
+                //Click buttonto trigger - showDatePickerDialog()
+                buttonDatePicker = findViewById(R.id.buttonDatePicker)
+                editTextDate = findViewById(R.id.editTextDate)
+                buttonDatePicker.setOnClickListener {
+                    showDatePickerDialog()
+                }//end onclick
+        
+                //Find proceed button and set Listener
+                val proceed = findViewById<MaterialButton>(R.id.proceedstep2)
+                proceed.setOnClickListener {
+                    val date = editTextDate.text.toString()
+                    val time = editTextTime.text.toString()
+        
+                    //Radio Button Place - Home/Away
+                    val home = findViewById<RadioButton>(R.id.radioHome)
+                    val away = findViewById<RadioButton>(R.id.radioAway)
+                    var where_taken = ""
+                    if (home.isChecked){
+                        where_taken = "Home"
+                    }//end dif
+                    if (away.isChecked){
+                        where_taken = "Away"
+                    }//end if
+        
+                    //Radio Button Self/Other
+                    val self = findViewById<RadioButton>(R.id.radioSelf)
+                    val other = findViewById<RadioButton>(R.id.radioOther)
+                    var booked_for = ""
+                    if (self.isChecked){
+                        booked_for = "Self"
+                    }//end
+                    if (other.isChecked){
+                        booked_for = "Other"
+                    }//end
+                    //check empties
+                    if (date.isEmpty() || time.isEmpty() || where_taken.isEmpty()
+                        || booked_for.isEmpty()){
+        
+                        Toast.makeText(applicationContext, "Empty Fields",
+                            Toast.LENGTH_SHORT).show()
+                    }
+                    else {
+                        //Save values collected from Radio button to Preferences
+                        PrefsHelper.savePrefs(applicationContext, "date", date)
+                        PrefsHelper.savePrefs(applicationContext, "time", time)
+                        PrefsHelper.savePrefs(applicationContext, "where_taken", where_taken)
+                        PrefsHelper.savePrefs(applicationContext, "booked_for", booked_for)
+                          //Check if GPS is enabled 
+                        if (isLocationEnabled()) {
+                        //Check if user Checked Self/Other
+                            if (booked_for=="Self"){
+                                //For Self - Save an Empty dependant_id to Prefs, Since no dependant
+                                PrefsHelper.savePrefs(applicationContext, "dependant_id", "")
+                                startActivity(Intent(applicationContext, CheckoutStep2GPS::class.java))
+                            }
+                            else {
+                                //Direct the user to pick a dependant in ViewDependants
+                                startActivity(Intent(applicationContext, ViewDependants::class.java))
+                            }//end else
+                        }//end if Location enabled
+        
+                         else {
+                           // if location not enabled, Take user to Settings to Activate GPS
+                            Toast.makeText(applicationContext, "GPS Is OFF",
+                                Toast.LENGTH_SHORT).show()
+                            startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+                         }
+                     
+                    }//end else
+                }//end listener
+            }//End onCreate
+        
+           //justpaste.it/arfi6
+           //This function checks if GPS is ON or OFF in your phone
+           private fun isLocationEnabled(): Boolean {
+               var locationManager: LocationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+               return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
+                   LocationManager.NETWORK_PROVIDER
+               )
+           }//end
+        
+        
+        
+        }//end class
+
+
+Run and Test GPS.
+
+
+## Step 3
+In this Step, we do where a user picked "Other" on the Radio Button. <br>
+Open the DependantAdapter.kt under **onBindViewHolder()** function. and update the  holder.itemView.setOnClickListener with below code.
+
+        holder.itemView.setOnClickListener {
+                 //Pick the  item.dependant_id of the item selected from recycler View
+                 //Save that dependant id in preferences
+                 PrefsHelper.savePrefs(context, "dependant_id", item.dependant_id)
+                 //Redirect to GPS Activity done in Previous Step.
+                 val i = Intent(context, CheckoutStep2GPS::class.java)
+                 i.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                 context.startActivity(i)
+         }//end Listener
 
 
 
