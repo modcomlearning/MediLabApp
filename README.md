@@ -4102,7 +4102,7 @@ To Link to ViewDependants.kt from AddDependants, Recall in AddDependants XML the
                     startActivity(Intent(requireContext(), ViewDependants::class.java))
                 }
 
-Now Run your App, From the MainActivity, Click on Profile Button(You must be logged in). The Click on AddDependant Bottom Nav. <br>
+Now Run your App, <br>From the MainActivity, Click on Profile Button(You must be logged in). <br> Then Click on AddDependant Bottom Nav. <br>
 Test Add Dependants and View Dependants.
 
 
