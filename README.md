@@ -4139,11 +4139,11 @@ Add this code in MyCart.kt
 In your MainPackage, create an Empty Views Activity named  CheckoutStep1.<br>
 In below Code; <br> 
 
-    1. There are Radio Buttons for user to Pick either the Booking is for Self or Other (dependant) <br>
-    2. There are Radio Buttons for user to Pick either the Booking is done at Home or Hosptal (Away) <br>
-    3. There is a DatePicker(We will use a Button and Edittext) for user to Pick Booking Date - yyyy/mm/dd <br>
-    4. There is a TimePicker(We will use a Button and Edittext)  for user to Pick Booking Time - hh:mm <br>
-    5. There is a Button to Proceed to Next Step - GPS <br>
+1. There are Radio Buttons for user to Pick either the Booking is for Self or Other (dependant) <br>
+2. There are Radio Buttons for user to Pick either the Booking is done at Home or Hosptal (Away) <br>
+3. There is a DatePicker(We will use a Button and Edittext) for user to Pick Booking Date - yyyy/mm/dd <br>
+4. There is a TimePicker(We will use a Button and Edittext)  for user to Pick Booking Time - hh:mm <br>
+5. There is a Button to Proceed to Next Step - GPS <br>
 
 In activity_checkout_step1.xml write below code .
 
