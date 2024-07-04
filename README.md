@@ -3406,13 +3406,334 @@ Below is the code for HomeFragment.kt.
             }
         }
 
-NB: Above code is a Fragment not an Activity. 
-Read more  https://developer.android.com/guide/fragments
-below code accesses the XML
+NB: Above code is a Fragment not an Activity.  <br>
+Read more  https://developer.android.com/guide/fragments  <br>
+Below code accesses the XML
 
            _binding = FragmentHomeBinding.inflate(inflater, container, false)
            val root: View = binding.root
 
-We also use requireContext(), as this is a Fragment. in Activities, we used getApplicationContext().
+We also use requireContext(), as this is a Fragment. in Activities, we used getApplicationContext(). <br>
+
+To Link to MemberProfile from MainActivity, go to MainActivity under update() function, Put a listener to Profile Button and Intent to MemberProfile <br>
+Check code commented with //  *************************
+
+
+             fun update(){
+                     //Find Views By ID
+                     val user = findViewById<MaterialTextView>(R.id.user)
+                     val signin = findViewById<MaterialButton>(R.id.signin)
+                     val signout = findViewById<MaterialButton>(R.id.signout)
+                     val profile = findViewById<MaterialButton>(R.id.profile)
+                     
+                     //Set below 3 Views to GONE/Disappear
+                     signin.visibility = View.GONE
+                     signout.visibility = View.GONE
+                     profile.visibility = View.GONE
+            
+                     //Access user access token from Prefs
+                     val token = PrefsHelper.getPrefs(applicationContext, "access_token")
+                     if (token.isEmpty()){
+                         //If user Token does  not exist, Update user TextView with Not Logged In
+                         user.text = "Not Logged In"
+                         //Make sign in button visible
+                         signin.visibility = View.VISIBLE
+                         signin.setOnClickListener {
+                             //Link to Sign in Activity
+                             startActivity(Intent(applicationContext, SignInActivity::class.java))
+                         }
+                     }
+                     else{
+                         //If user Token  exist, 
+                         //Make Profile Button visible
+                         profile.visibility = View.VISIBLE
+                         //  *************************
+                         profile.setOnClickListener {
+                             //Link to Member Profile TODO Later
+                            startActivity(Intent(applicationContext, MemberProfile::class.java))
+                         }//end
+                         
+                         //Access username from Prefs
+                         val surname = PrefsHelper.getPrefs(applicationContext, "surname")
+                         //Update user textView with Logged in User
+                         user.text = "Welcome $surname"
+                         //Make signout button visble
+                         signout.visibility = View.VISIBLE
+                         //Link to PrefHelper and Clear Prefs
+                         signout.setOnClickListener{
+                             PrefsHelper.clearPrefs(applicationContext)
+                             startActivity(intent)
+                             finishAffinity()
+                         }
+                     }
+             }//end
+
+### Step 2
+Above we did Profile in home fragment. Next we do Dependants(Add and View Dependants). <br>
+
+In res/layout create a file named fragment_dependant.xml and write below form inputs, they include TextViews, EditTexts, RadioButton, Buttons, ScrollView etc.
+
+        <?xml version="1.0" encoding="utf-8"?>
+        <ScrollView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:orientation="vertical"
+                android:layout_margin="10dp"
+                android:layout_height="match_parent"
+                tools:context=".SignUpActivity">
+                
+                <com.google.android.material.button.MaterialButton
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="My Dependants"
+                    android:padding="10dp"
+                    android:id="@+id/mydependants"/>
+        
+                <com.google.android.material.button.MaterialButton
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="My Bookings"
+                    android:padding="10dp"
+                    android:background="@drawable/bg1"
+                    android:id="@+id/mybookings"/>
+                
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Add Dependant"
+                    android:textStyle="bold"
+                    android:textSize="30sp"
+                    android:fontFamily="@font/montserrat"
+                    android:textColor="@color/black"
+                    />
+        
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:hint="Your Surname">
+        
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPersonName"
+                        android:id="@+id/surname"/>
+        
+                </com.google.android.material.textfield.TextInputLayout>
+        
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:hint="Your Others">
+        
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPersonName"
+                        android:id="@+id/others"/>
+        
+                </com.google.android.material.textfield.TextInputLayout>
+        
+        
+                <RadioGroup
+                    android:id="@+id/radioGroupGender"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <com.google.android.material.radiobutton.MaterialRadioButton
+                        android:id="@+id/radioMale"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Male"
+                        />
+                    <com.google.android.material.radiobutton.MaterialRadioButton
+                        android:id="@+id/radioFemale"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Female"
+                        />
+                </RadioGroup>
+        
+                <!--
+                ChatGPT - click button and popup a calender put the
+                date in Edittext android kotlin xml
+                -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <com.google.android.material.button.MaterialButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="DOB"
+                        android:id="@+id/buttonDatePicker"/>
+        
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Date here"
+                        android:enabled="false"
+                        android:id="@+id/editTextDate"/>
+                </LinearLayout>
+        
+        
+                <com.google.android.material.button.MaterialButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Add Dependant"
+                    android:background="@drawable/bg1"
+                    android:id="@+id/adddependant"/>
+        
+        
+            </LinearLayout>
+        </ScrollView>
+
+        
+Under ui package, create a subpackage named dependants, Inside this subpackage, create a Kotlin Class File and write below code to get data from XML inputs and Post to our add_dependants API.
+
+        package com.modcom.medilabsapp.ui.dependants
+        import android.app.DatePickerDialog
+        import android.content.Intent
+        import android.os.Bundle
+        import androidx.fragment.app.Fragment
+        import android.view.LayoutInflater
+        import android.view.View
+        import android.view.ViewGroup
+        import android.widget.*
+        import androidx.core.app.ActivityCompat.finishAffinity
+        import com.google.android.material.button.MaterialButton
+        import com.google.android.material.textfield.TextInputEditText
+        import com.modcom.medilabsapp.*
+        import com.modcom.medilabsapp.constants.Constants
+        import com.modcom.medilabsapp.helpers.ApiHelper
+        import com.modcom.medilabsapp.helpers.PrefsHelper
+        import org.json.JSONArray
+        import org.json.JSONObject
+        import java.text.SimpleDateFormat
+        import java.util.*
+        
+        
+        class DependantFragment : Fragment() {
+            private lateinit var buttonDatePicker: Button
+            private lateinit var editTextDate: EditText
+            override fun onCreateView(
+                inflater: LayoutInflater, container: ViewGroup?,
+                savedInstanceState: Bundle?
+            ): View? {
+                // Inflate the layout for this fragment
+                val root = inflater.inflate(R.layout.fragment_dependant, container, false)
+                //Code here
+                buttonDatePicker = root.findViewById(R.id.buttonDatePicker)
+                editTextDate = root.findViewById(R.id.editTextDate)
+                //Button Listener and call  showDatePickerDialog() - see this function at the end of this File.
+                buttonDatePicker.setOnClickListener {
+                    showDatePickerDialog()
+                }//end onclick
+        
+                val mydependants  = root.findViewById<MaterialButton>(R.id.mydependants)
+                mydependants.setOnClickListener {
+                    // below Intent, to be activated once ViewDependants is created
+                    // startActivity(Intent(requireContext(), ViewDependants::class.java))
+                }
+        
+                val mybookings  = root.findViewById<MaterialButton>(R.id.mybookings)
+                mybookings.setOnClickListener {
+                    startActivity(Intent(requireContext(), MyBookings::class.java))
+                }
+        
+                //post to API
+                val adddependant = root.findViewById<MaterialButton>(R.id.adddependant)
+                adddependant.setOnClickListener {
+                    //Push/Post data to APi.
+                    val surname = root.findViewById<TextInputEditText>(R.id.surname)
+                    val others = root.findViewById<TextInputEditText>(R.id.others)
+                    val female = root.findViewById<RadioButton>(R.id.radioFemale)
+                    val male = root.findViewById<RadioButton>(R.id.radioMale)
+                    //handle Radio Buttons
+                    var gender = "N/A"
+                    if (female.isSelected) {
+                        gender = "Female"
+                    }
+                    if (male.isSelected) {
+                        gender = "Male"
+                    }
+                    //Get member ID from Prefs
+                    val member_id = PrefsHelper.getPrefs(requireContext(), "member_id")
+                    //Access base URL
+                    val api = Constants.BASE_URL+"/add_dependant"
+                    val helper = ApiHelper(requireContext())
+                    val body = JSONObject()
+                    body.put("surname", surname.text.toString())
+                    body.put("others", others.text.toString())
+                    body.put("dob", editTextDate.text.toString())
+                    body.put("gender", gender)
+                    body.put("member_id", member_id)
+                    helper.post(api, body, object : ApiHelper.CallBack {
+                        override fun onSuccess(result: JSONArray?) {
+                        }
+        
+                        override fun onSuccess(result: JSONObject?) {
+                            //Dependants Saved
+                            Toast.makeText(requireContext(), result.toString(),
+                                Toast.LENGTH_SHORT).show()
+                        }
+        
+                        override fun onFailure(result: String?) {
+                            Toast.makeText(requireContext(),
+                                result.toString(), Toast.LENGTH_SHORT).show()
+                            val json = JSONObject(result.toString())
+                            val msg = json.opt("msg")
+                            //TODO
+                            //If token is Expired redrect to SignIn and Clear Prefs
+                            if (msg == "Token has Expired"){
+                                PrefsHelper.clearPrefs(requireContext())
+                                startActivity(Intent(requireContext(), SignInActivity::class.java))
+                                finishAffinity(requireActivity())
+                            }
+                        }
+                    });
+        
+                }//end listener
+        
+                return root
+        
+            }//end oncreate view
+        
+        
+            //This is for launching the DatePicker.
+            private fun showDatePickerDialog() {
+                val calendar = Calendar.getInstance()
+                // Create a date picker dialog and set the current date as the default selection
+                val datePickerDialog = DatePickerDialog(
+                    requireContext(),
+                    { _: DatePicker, year: Int, month: Int, day: Int ->
+                        val selectedDate = formatDate(year, month, day)
+                        editTextDate.setText(selectedDate)
+                    },
+                    calendar.get(Calendar.YEAR),
+                    calendar.get(Calendar.MONTH),
+                    calendar.get(Calendar.DAY_OF_MONTH)
+                )
+                // Show the date picker dialog
+                datePickerDialog.show()
+            }
+            private fun formatDate(year: Int, month: Int, day: Int): String {
+                val calendar = Calendar.getInstance()
+                calendar.set(year, month, day)
+                val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                return dateFormat.format(calendar.time)
+            }
+        }//last brace, End Class
+
+
+
+
 
 
