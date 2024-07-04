@@ -3221,6 +3221,6 @@ Screenshot before Login<br>
 
 <img src="img_18.png" width="250"/>
 
-
-Screenshot after Login.
+<br>
+Screenshot after Login.<br>
 <img src="img_19.png" width="250"/>
