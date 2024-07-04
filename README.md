@@ -4105,7 +4105,615 @@ To Link to ViewDependants.kt from AddDependants, Recall in AddDependants XML the
 Now Run your App, <br>From the MainActivity, Click on Profile Button(You must be logged in). <br> Then Click on AddDependant Bottom Nav. <br>
 Test Add Dependants and View Dependants.
 
+## Part 6
+In this Part, we will proceed with Checkout, Now that we have Laboratories, LabTests, Add to Cart, Signin, SignUp, Profile, Add Dependants and ViewDependants <br>
+During checkout, User must have items in the Cart, They must be logged in. Confirm in your App that above mentioned features are working.
 
+### Step 1
+Open MyCart.kt and Add Logic to checkout Button(At this Point revisit the Shopping Cart and confirm it works correctly).
+Add this code in MyCart.kt
+
+        val checkout = findViewById<MaterialButton>(R.id.checkout)
+        if (helper.totalCost() == 0.0){
+            checkout.visibility = View.GONE
+        }//end
+         //This one
+         checkout.setOnClickListener {
+            //Using Prefs check if token exists
+             val token = PrefsHelper.getPrefs(applicationContext, "access_token")
+             if (token.isEmpty()){
+                 //Token does not exist, meaning Not Signed In, Redirect to Sign up
+                 Toast.makeText(applicationContext, "Not Logged In",
+                     Toast.LENGTH_SHORT).show()
+                 startActivity(Intent(applicationContext, SignInActivity::class.java))
+                 finish()
+             }
+            else {
+                 //Token Exists, meaning Signed In and we Go to Next step
+                 //startActivity(Intent(applicationContext, CheckoutStep1::class.java))
+                 Toast.makeText(applicationContext, "Logged In", Toast.LENGTH_SHORT).show()
+             }
+        }//end
+
+
+In your MainPackage, create an Empty Views Activity named  CheckoutStep1.<br>
+In below Code; <br> 
+
+    1. There are Radio Buttons for user to Pick either the Booking is for Self or Other (dependant) <br>
+    2. There are Radio Buttons for user to Pick either the Booking is done at Home or Hosptal (Away) <br>
+    3. There is a DatePicker(We will use a Button and Edittext) for user to Pick Booking Date - yyyy/mm/dd <br>
+    4. There is a TimePicker(We will use a Button and Edittext)  for user to Pick Booking Time - hh:mm <br>
+    5. There is a Button to Proceed to Next Step - GPS <br>
+
+In activity_checkout_step1.xml write below code .
+
+        <?xml version="1.0" encoding="utf-8"?>
+        <ScrollView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:orientation="vertical"
+                android:layout_margin="10dp"
+                android:layout_height="match_parent"
+                tools:context=".CheckoutStep1">
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Step 1"
+                    android:textStyle="bold"
+                    android:textSize="30sp"
+                    android:fontFamily="@font/montserrat"
+                    android:textColor="@color/black"
+                    />
+        
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="Who is this test For?"/>
+        
+                <RadioGroup
+                    android:id="@+id/radioGroupGender"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <com.google.android.material.radiobutton.MaterialRadioButton
+                        android:id="@+id/radioSelf"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Self"
+                        />
+                    <com.google.android.material.radiobutton.MaterialRadioButton
+                        android:id="@+id/radioOther"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Other"
+                        />
+                </RadioGroup>
+        
+             <!-- Radio buttons for Away or Home-->
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="Where is Test Done?"/>
+        
+                <RadioGroup
+                    android:id="@+id/radioGroupDone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <com.google.android.material.radiobutton.MaterialRadioButton
+                        android:id="@+id/radioAway"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Away"
+                        />
+                    <com.google.android.material.radiobutton.MaterialRadioButton
+                        android:id="@+id/radioHome"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Home"
+                        />
+                </RadioGroup>
+        
+        
+        
+                <!--
+                ChatGPT - click button and popup a calender put the
+                date in Edittext android kotlin xml
+                -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:orientation="horizontal">
+                    <com.google.android.material.button.MaterialButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Appointment Date"
+                        android:id="@+id/buttonDatePicker"/>
+        
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Date here"
+                        android:enabled="false"
+                        android:id="@+id/editTextDate"/>
+                </LinearLayout>
+        
+                <!-- Time-->
+               <LinearLayout
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:layout_marginTop="20dp"
+                   android:orientation="horizontal">
+        
+                   <Button
+                       android:id="@+id/btnTimePicker"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="Appointment Time" />
+                   <EditText
+                       android:id="@+id/editTextTime"
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content"
+                       android:hint="Selected Time"
+                       android:inputType="none"
+                       android:enabled="false" />
+               </LinearLayout>
+        
+        
+        
+                <com.google.android.material.button.MaterialButton
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Proceed to Step 2"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="20dp"
+                    android:background="@drawable/bg1"
+                    android:textColor="#000000"
+                    android:drawableEnd="@android:drawable/ic_media_next"
+                    android:id="@+id/proceedstep2"/>
+        
+            </LinearLayout>
+            <!--github.com/modcomlearning/MediLabApp-->
+        </ScrollView>
+
+In CheckoutStep1.kt, Write Below code, Start by Creating functions for TimePicker and DatePicker, DO buttons to trigger  TimePicker and DatePicker.
+Then handle the Proceed button Listener, followed by Radio buttons etc.
+
+        package com.modcom.medilabsapp
+        import android.app.DatePickerDialog
+        import android.app.TimePickerDialog
+        import android.content.Context
+        import android.content.Intent
+        import android.location.Geocoder
+        import android.location.LocationManager
+        import androidx.appcompat.app.AppCompatActivity
+        import android.os.Bundle
+        import android.provider.Settings
+        import android.util.Log
+        import android.widget.*
+        import com.google.android.gms.maps.model.LatLng
+        import com.google.android.material.button.MaterialButton
+        import com.modcom.medilabsapp.helpers.PrefsHelper
+        import java.text.SimpleDateFormat
+        import java.util.*
+        
+        class CheckoutStep1 : AppCompatActivity() {
+            private lateinit var buttonDatePicker: Button
+            private lateinit var editTextDate: EditText
+            private lateinit var btnTimePicker: Button
+            private lateinit var editTextTime: EditText
+        
+            //This will help show the TimePicker
+            fun showTimePicker(){
+                val calender = Calendar.getInstance()
+                val timePickerDialog = TimePickerDialog(
+                    this,
+                    timeSetListener,
+                    calender.get(Calendar.HOUR_OF_DAY),
+                    calender.get(Calendar.MINUTE),
+                    false)
+                timePickerDialog.show()
+            }//end
+        
+           //https://justpaste.it/cmht0
+           //This code Listens for time selections and place the time in editTextTime
+           private val timeSetListener = TimePickerDialog.OnTimeSetListener{
+                   _, hourOfDay, minute ->
+        
+                val calendar = Calendar.getInstance()  //***********
+                calendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
+                calendar.set(Calendar.MINUTE, minute)
+                val sdf = SimpleDateFormat("hh:mm", Locale.getDefault())
+                val selectedTime = sdf.format(calendar.time)
+                editTextTime.setText(selectedTime)
+            }//end
+        
+        
+           
+            private fun showDatePickerDialog() {
+                val calendar = Calendar.getInstance()
+                // Create a date picker dialog and set the current date as the default selection
+                val datePickerDialog = DatePickerDialog(
+                    this,
+                    { _: DatePicker, year: Int, month: Int, day: Int ->
+                        val selectedDate = formatDate(year, month, day)
+                        editTextDate.setText(selectedDate)
+                    },
+                    calendar.get(Calendar.YEAR),
+                    calendar.get(Calendar.MONTH),
+                    calendar.get(Calendar.DAY_OF_MONTH)
+                )
+                // Show the date picker dialog
+                datePickerDialog.datePicker.minDate = System.currentTimeMillis() - 1000;
+                datePickerDialog.show()
+            }
+        
+        
+            private fun formatDate(year: Int, month: Int, day: Int): String {
+                val calendar = Calendar.getInstance()
+                calendar.set(year, month, day)
+                val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                return dateFormat.format(calendar.time)
+            }
+            //justpaste.it/6l88f
+        
+            override fun onCreate(savedInstanceState: Bundle?) {
+                super.onCreate(savedInstanceState)
+                setContentView(R.layout.activity_checkout_step1)
+        
+                //Click button to trigger - showTimePicker()
+                btnTimePicker = findViewById(R.id.btnTimePicker)
+                editTextTime = findViewById(R.id.editTextTime)
+                btnTimePicker.setOnClickListener {
+                    showTimePicker()
+                }//end
+        
+                //Click button to trigger - showDatePickerDialog()
+                buttonDatePicker = findViewById(R.id.buttonDatePicker)
+                editTextDate = findViewById(R.id.editTextDate)
+                buttonDatePicker.setOnClickListener {
+                    showDatePickerDialog()
+                }//end onclick
+        
+                //Find proceed button and set Listener
+                val proceed = findViewById<MaterialButton>(R.id.proceedstep2)
+                proceed.setOnClickListener {
+                    val date = editTextDate.text.toString()
+                    val time = editTextTime.text.toString()
+        
+                    //Radio Button Place - Home/Away
+                    val home = findViewById<RadioButton>(R.id.radioHome)
+                    val away = findViewById<RadioButton>(R.id.radioAway)
+                    var where_taken = ""
+                    if (home.isChecked){
+                        where_taken = "Home"
+                    }//end dif
+                    if (away.isChecked){
+                        where_taken = "Away"
+                    }//end if
+        
+                    //Radio Button Self/Other
+                    val self = findViewById<RadioButton>(R.id.radioSelf)
+                    val other = findViewById<RadioButton>(R.id.radioOther)
+                    var booked_for = ""
+                    if (self.isChecked){
+                        booked_for = "Self"
+                    }//end
+                    if (other.isChecked){
+                        booked_for = "Other"
+                    }//end
+                    //check empties
+                    if (date.isEmpty() || time.isEmpty() || where_taken.isEmpty()
+                        || booked_for.isEmpty()){
+        
+                        Toast.makeText(applicationContext, "Empty Fields",
+                            Toast.LENGTH_SHORT).show()
+                    }
+                    else {
+                        //Save values collected from Radio button to Preferences
+                        PrefsHelper.savePrefs(applicationContext, "date", date)
+                        PrefsHelper.savePrefs(applicationContext, "time", time)
+                        PrefsHelper.savePrefs(applicationContext, "where_taken", where_taken)
+                        PrefsHelper.savePrefs(applicationContext, "booked_for", booked_for)
+                        //Check if user Checked Self/Other
+                            if (booked_for=="Self"){
+                                //For Self - Save an Empty dependant_id to Prefs, Since no dependant 
+                                PrefsHelper.savePrefs(applicationContext, "dependant_id", "")
+                                //Below to be done once the CheckoutStep2GPS is done, we leave it for now.
+                                //startActivity(Intent(applicationContext, CheckoutStep2GPS::class.java))
+                            }
+                            else {
+                                //For Other - Direct the user to pick a dependant in View Dependants
+                                startActivity(Intent(applicationContext, ViewDependants::class.java))
+                            }//end else
+                      
+                    }//end else
+                }//end listener
+            }//End onCreate
+           //justpaste.it/arfi6
+        
+        }//end class
+
+### Step 2
+In this section, we will handle the **CheckoutStep2GPS** and **ViewDependants**. Note that the user is directed to these two depending on which radio they picked either **Self** or **Other**. <br>
+To start,  assume the user Picked **Self**, so we need to create the CheckoutStep2GPS activity. <br>
+In your main package, Create an Empty Views Activity named CheckoutStep2GPS. <br>
+
+in activity_checkout_step2_gps.xml write below code. It contains some TextViews, EditTexts(to place GPS coordinates) and a Button <br>
+
+        <?xml version="1.0" encoding="utf-8"?>
+        <ScrollView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:orientation="vertical"
+                android:layout_margin="10dp"
+                android:layout_height="match_parent"
+                tools:context=".CheckoutStep2GPS">
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Step 2"
+                    android:textStyle="bold"
+                    android:layout_marginTop="25dp"
+                    android:textSize="30sp"
+                    android:fontFamily="@font/montserrat"
+                    android:textColor="@color/black"
+                    />
+        
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:hint="Latitude here">
+        
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPersonName"
+                        android:id="@+id/editLatitude"/>
+        
+                </com.google.android.material.textfield.TextInputLayout>
+        
+        
+        
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:hint="Longitude Here">
+        
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPersonName"
+                        android:id="@+id/editLongitude"/>
+        
+                </com.google.android.material.textfield.TextInputLayout>
+        
+               <ProgressBar
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:id="@+id/progress"/>
+        
+        
+                <com.google.android.material.button.MaterialButton
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Get Location"
+                    android:background="@drawable/bg2"
+                    android:backgroundTint="#000000"
+                    android:layout_gravity="center"
+                    android:id="@+id/getlocation"/>
+        
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:padding="20dp"
+                    android:textStyle="bold"
+                    android:textColor="#3F51B5"
+                    android:id="@+id/skip"/>
+        
+        
+                <com.google.android.material.button.MaterialButton
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Complete"
+                    android:background="@drawable/bg1"
+                    android:layout_gravity="center"
+                    android:id="@+id/complete"/>
+        
+            </LinearLayout>
+        </ScrollView>
+
+
+In CheckoutStep2GPS.kt write below code to retrieve phones GPS and place in EditTexts <br>
+
+        package com.modcom.medilabsapp
+        import android.annotation.SuppressLint
+        import android.content.Intent
+        import android.content.pm.PackageManager
+        import android.location.Geocoder
+        import android.net.Uri
+        import androidx.appcompat.app.AppCompatActivity
+        import android.os.Bundle
+        import android.os.Looper
+        import android.util.Log
+        import android.view.View
+        import android.widget.Button
+        import android.widget.ProgressBar
+        import android.widget.Toast
+        import androidx.core.app.ActivityCompat
+        import com.google.android.gms.location.FusedLocationProviderClient
+        import com.google.android.gms.location.LocationCallback
+        import com.google.android.gms.location.LocationRequest
+        import com.google.android.gms.location.LocationResult
+        import com.google.android.gms.location.LocationServices
+        import com.google.android.gms.maps.model.LatLng
+        import com.google.android.material.button.MaterialButton
+        import com.google.android.material.textfield.TextInputEditText
+        import com.google.android.material.textview.MaterialTextView
+        import com.modcom.medilabsapp.helpers.PrefsHelper
+        
+        class CheckoutStep2GPS : AppCompatActivity() {
+            private  lateinit var editLatitude: TextInputEditText
+            private lateinit var editLongitude: TextInputEditText
+            private lateinit var getlocation: MaterialButton
+            private lateinit var progress: ProgressBar
+            private lateinit var skip: MaterialTextView
+            private lateinit var fusedLocationClient: FusedLocationProviderClient
+        
+        
+            //Convert cordinates to Address
+            fun getAddress(latlng: LatLng) : String{
+                val geoCoder = Geocoder(this)
+                val list = geoCoder.getFromLocation(latlng.latitude, latlng.longitude,
+                    1)
+                return list!![0].getAddressLine(0)
+            }//end
+        
+            override fun onCreate(savedInstanceState: Bundle?) {
+                super.onCreate(savedInstanceState)
+                setContentView(R.layout.activity_checkout_step2_gps)
+                editLatitude = findViewById(R.id.editLatitude)
+                editLongitude = findViewById(R.id.editLongitude)
+                progress = findViewById(R.id.progress)
+                getlocation = findViewById(R.id.getlocation)
+                fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+                progress.visibility = View.GONE
+                getlocation.setOnClickListener {
+                     //TODO
+                    progress.visibility = View.VISIBLE
+                    requestLocation()
+                }//end
+        
+                val complete = findViewById<Button>(R.id.complete)
+                complete.setOnClickListener {
+                    PrefsHelper.savePrefs(applicationContext, "latitude",
+                        editLatitude.text.toString())
+                    PrefsHelper.savePrefs(applicationContext, "longitude",
+                        editLongitude.text.toString())
+                    val intent = Intent(applicationContext, CompleteActivity::class.java)
+                    startActivity(intent)
+                }
+        
+            }//end onCreate
+        
+            //Function to check if user accepted permission or not
+            //If user has not accepted permissions, Give them dialog to decide
+            fun requestLocation(){
+                if(ActivityCompat.checkSelfPermission(
+                        this,
+                        android.Manifest.permission.ACCESS_FINE_LOCATION) !=
+                        PackageManager.PERMISSION_GRANTED){
+                         ActivityCompat.requestPermissions(
+                             this,
+                             arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION,
+                                 android.Manifest.permission.ACCESS_COARSE_LOCATION),
+                             123)
+                      }//end if
+                      else {
+                          getLocation() //get Lat and Lon
+                      }
+            }//end function
+        
+        
+            @SuppressLint("MissingPermission")
+            fun getLocation(){
+                fusedLocationClient.lastLocation
+                    .addOnSuccessListener {
+                        location ->
+                        location?.let {
+                            editLatitude.setText(it.latitude.toString())
+                            editLongitude.setText(it.longitude.toString())
+                            progress.visibility = View.GONE
+        
+                            val place = getAddress(LatLng(it.latitude, it.longitude));
+                            Toast.makeText(applicationContext, "here $place",
+                                Toast.LENGTH_SHORT).show()
+                            //Put the place ia TextView
+                            val skip = findViewById<MaterialTextView>(R.id.skip)
+                            skip.text = "Current Location \n $place"
+                            requestNewLocation()
+                            //Put button when  I click on that button.
+                            //It intents to Maps and shows that Location.
+                            //...................
+                            //Interfaces.
+                            //JS - Advanced
+        
+        
+                        } ?: run {
+                            Toast.makeText(applicationContext, "Searching Location",
+                                Toast.LENGTH_SHORT).show()
+                            progress.visibility = View.GONE
+                            requestNewLocation()
+                        } //end run
+                    }//end success
+                    .addOnFailureListener { e ->
+                        Toast.makeText(applicationContext, "Error $e", Toast.LENGTH_SHORT).show()
+                        progress.visibility = View.GONE
+                        requestNewLocation()
+                    }//end Failure
+            }//end function
+        
+            lateinit var mLocationCallback: LocationCallback
+            @SuppressLint("MissingPermission")
+            fun requestNewLocation(){
+                progress.visibility = View.VISIBLE
+                Log.d("hhhhhh", "Requesting New Location")
+                val mLocationRequest = LocationRequest.create()
+                mLocationRequest.interval = 10000
+                mLocationRequest.fastestInterval = 10000
+                mLocationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+                mLocationCallback = object : LocationCallback(){
+                    override fun onLocationResult(result: LocationResult) {
+                         for(location in result.locations){
+                             if (location!=null){
+                                 editLatitude.setText(location.latitude.toString())
+                                 editLongitude.setText(location.longitude.toString())
+                                 progress.visibility = View.GONE
+        
+                                 PrefsHelper.savePrefs(applicationContext, "latitude", editLatitude.text.toString())
+                                 PrefsHelper.savePrefs(applicationContext, "longitude", editLongitude.text.toString())
+        
+                             }//end if
+                             else {
+                                 Toast.makeText(applicationContext, "Check GPS",
+                                     Toast.LENGTH_SHORT).show()
+                             }//end else
+                         }//end for
+                    }//end result
+                }//end call back
+        
+                fusedLocationClient.requestLocationUpdates(mLocationRequest,
+                mLocationCallback, Looper.getMainLooper())
+        
+            }//end function
+        
+        }//end class
+
+
+in AndroidManifest.xml add below GPS permissions. <br>
+             .....
+             
+            <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+            <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+             .....
 
 
 
