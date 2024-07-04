@@ -3305,6 +3305,20 @@ Below is the corresponding MemberProfile.kt code. Below code have 2 Bottom navig
         }
 
 
+in res/values/strings.xml you can update the Bottom Navigation titles linke below
+
+        <resources>
+            <string name="app_name">MediLabsApp</string>
+            <string name="title_activity_member_profile">MemberProfile</string>
+            <!-- Botton Navigation Titles-->
+            <string name="title_home">Home</string>
+            <string name="title_dependants">Dependants</string>
+            <string name="title_notifications">Notifications</string>
+            <!-- TODO: Remove or change this placeholder text -->
+            <string name="hello_blank_fragment">Hello blank fragment</string>
+        </resources>
+
+
 Under **ui** package, Open HomeFragment.kt, here we will create the member profile, already we have the member details in the SharedPrefferences, we can retrieve them with below code and bind them in TextViews.
 
           val userObject = PrefsHelper.getPrefs(requireContext(), "userObject")
@@ -3731,6 +3745,365 @@ Under ui package, create a subpackage named dependants, Inside this subpackage, 
                 return dateFormat.format(calendar.time)
             }
         }//last brace, End Class
+        
+Above will help a member add a dependant.
+
+### Step 3
+This Step We Create a File to View dependants.
+In res/layout create a file named single_dependant.xml and write below code.
+
+        <?xml version="1.0" encoding="utf-8"?>
+        <androidx.cardview.widget.CardView
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardElevation="10dp"
+            android:layout_margin="8dp"
+            app:cardCornerRadius="5dp">
+        
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="120dp">
+        
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/labimage"
+                    android:layout_width="55dp"
+                    android:layout_height="55dp"
+                    android:src="@drawable/screen1"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"/>
+        
+                <LinearLayout
+                    android:id="@+id/linear1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toEndOf="@id/labimage"
+                    android:orientation="vertical"
+                    android:layout_marginLeft="10dp">
+        
+                    <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Ann"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:fontFamily="@font/montserrat"
+                        android:textColor="@color/black"
+                        android:id="@+id/dep_name"/>
+        
+                    <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="James"
+                        android:textStyle="normal"
+                        android:textSize="12sp"
+                        android:maxLines="2"
+                        android:fontFamily="@font/montserrat"
+                        android:textColor="#787474"
+                        android:layout_marginTop="6dp"
+                        android:id="@+id/dep_others"/>
+                </LinearLayout>
+        
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/linear1"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginBottom="5dp"
+                    android:orientation="vertical">
+        
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/dep_dob"
+                        android:layout_width="315dp"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/montserrat"
+                        android:text="2022-02-08"
+                        android:textAlignment="textEnd"
+                        android:textColor="#FF5722"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+        
+            </RelativeLayout>
+        </androidx.cardview.widget.CardView>
+
+
+in adapters, Create an adapter named DependantAdapter.kt and write below adapter.
+
+        package com.modcom.medilabsapp.adapters
+        import android.app.AlertDialog
+        import android.content.Context
+        import android.content.Intent
+        import android.view.LayoutInflater
+        import android.view.View
+        import android.view.ViewGroup
+        import android.widget.Toast
+        import androidx.recyclerview.widget.RecyclerView
+        import com.google.android.material.textview.MaterialTextView
+        import com.modcom.medilabsapp.CheckoutStep2GPS
+        import com.modcom.medilabsapp.LabTestsActivity
+        import com.modcom.medilabsapp.R
+        import com.modcom.medilabsapp.SingleLabTest
+        import com.modcom.medilabsapp.helpers.PrefsHelper
+        import com.modcom.medilabsapp.models.Dependant
+        import com.modcom.medilabsapp.models.Lab
+        import com.modcom.medilabsapp.models.LabTests
+        
+        
+        class DependantAdapter(var context: Context):
+            RecyclerView.Adapter<DependantAdapter.ViewHolder>() {
+        
+            //Create a List and connect it with our model
+            var itemList : List<Dependant> = listOf() //Its empty
+        
+            //Create a Class here, will hold our views in single_lab xml
+            inner class  ViewHolder(itemView: View):  RecyclerView.ViewHolder(itemView)
+        
+            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DependantAdapter.ViewHolder {
+                //access/inflate the single lab xml
+                val view = LayoutInflater.from(parent.context).inflate(R.layout.single_dependant,
+                    parent, false)
+        
+                return ViewHolder(view) //pass the single lab to ViewHolder
+            }
+        
+            override fun onBindViewHolder(holder: DependantAdapter.ViewHolder, position: Int) {
+                 //Find your 3 text views
+                val dep_name = holder.itemView.findViewById<MaterialTextView>(R.id.dep_name)
+                val dep_others = holder.itemView.findViewById<MaterialTextView>(R.id.dep_others)
+                val dep_dob = holder.itemView.findViewById<MaterialTextView>(R.id.dep_dob)
+                //Assume one Lab
+                 val item = itemList[position]
+                 dep_name.text = item.surname
+                 dep_others.text = item.others
+                 dep_dob.text = item.dob
+                 holder.itemView.setOnClickListener {
+               
+                        
+                 }//end Listner
+            }//end bind
+        
+            override fun getItemCount(): Int {
+                return itemList.size  //Count how may Items in the List
+            }
+        
+            //This is for filtering data
+            fun filterList(filterList: List<Dependant>){
+                itemList = filterList
+                notifyDataSetChanged()
+            }
+        
+        
+            //Earlier we mentioned item List is empty!
+            //We will get data from our APi, then bring it to below function
+            //The data you bring here must follow the Lab model
+            fun setListItems(data: List<Dependant>){
+                itemList = data //map/link the data to itemlist
+                notifyDataSetChanged()
+            //Tell this adapter class that now itemList is loaded with data
+            }
+        
+        }
+
+
+Next, in main package, create a new Empty Views Activity named ViewDependants.
+in activity_view_dependants.xml  write below code for the Recycler View.
+
+        <?xml version="1.0" encoding="utf-8"?>
+        <LinearLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            tools:context=".ViewDependants">
+        
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Search dependant.."
+                android:drawableStart="@android:drawable/ic_menu_search"
+                android:layout_margin="5dp"
+                android:id="@+id/etsearch"/>
+            <ProgressBar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="3dp"
+                android:id="@+id/progress"/>
+        
+        
+            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/swipeRefreshLayout">
+        
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    tools:listitem="@layout/single_dependant"/>
+        
+            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+        
+        
+        
+        </LinearLayout>
+
+
+Then in ViewDependants.kt write below code to load the data from the Adpater to our Recycler View
+
+        package com.modcom.medilabsapp
+        import android.content.Intent
+        import androidx.appcompat.app.AppCompatActivity
+        import android.os.Bundle
+        import android.text.Editable
+        import android.text.TextWatcher
+        import android.util.Log
+        import android.view.View
+        import android.widget.EditText
+        import android.widget.ProgressBar
+        import android.widget.Toast
+        import androidx.recyclerview.widget.LinearLayoutManager
+        import androidx.recyclerview.widget.RecyclerView
+        import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        import com.google.gson.GsonBuilder
+        import com.modcom.medilabsapp.adapters.DependantAdapter
+        import com.modcom.medilabsapp.adapters.LabTestsAdapter
+        import com.modcom.medilabsapp.constants.Constants
+        import com.modcom.medilabsapp.helpers.ApiHelper
+        import com.modcom.medilabsapp.helpers.PrefsHelper
+        import com.modcom.medilabsapp.models.Dependant
+        import com.modcom.medilabsapp.models.LabTests
+        import org.json.JSONArray
+        import org.json.JSONObject
+        
+        class ViewDependants : AppCompatActivity() {
+            lateinit var itemList: List<Dependant>
+            lateinit var depAdapter: DependantAdapter
+            lateinit var recyclerView: RecyclerView
+            lateinit var progress: ProgressBar
+            lateinit var swiperefresh: SwipeRefreshLayout
+            override fun onCreate(savedInstanceState: Bundle?) {
+                super.onCreate(savedInstanceState)
+                setContentView(R.layout.activity_view_dependants)
+        
+                progress = findViewById(R.id.progress)
+                recyclerView = findViewById(R.id.recycler)
+                depAdapter = DependantAdapter(applicationContext)
+                recyclerView.layoutManager = LinearLayoutManager(applicationContext)
+                recyclerView.setHasFixedSize(true)
+                post_fetch()
+        
+                swiperefresh = findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout)
+                swiperefresh.setOnRefreshListener {
+                    post_fetch()// fetch data again
+                }//end refresh
+        
+                //Filter labs
+                val etsearch = findViewById<EditText>(R.id.etsearch)
+                etsearch.addTextChangedListener(object: TextWatcher {
+                    override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+        
+                    }
+        
+                    override fun onTextChanged(texttyped: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                        filter(texttyped.toString())
+                    }
+        
+                    override fun afterTextChanged(p0: Editable?) {
+        
+                    }
+        
+                })
+        
+            }//end oncreate
+        
+            fun post_fetch(){
+                val api = Constants.BASE_URL+"/view_dependants"
+                //Above APi needs a Body, So we have to build it
+                val body = JSONObject()
+                //Retrieve the id from Prefs
+                val member_id = PrefsHelper.getPrefs(applicationContext,"member_id")
+                //provide the ID to the API
+                body.put("member_id", member_id) //NB: 4 is static
+                val helper = ApiHelper(applicationContext)
+                helper.post(api, body, object : ApiHelper.CallBack{
+                    override fun onSuccess(result: JSONArray?) {
+                        val gson = GsonBuilder().create()
+                        itemList = gson.fromJson(result.toString(),
+                            Array<Dependant>::class.java).toList()
+                        //Finally, our adapter has the data
+                        depAdapter.setListItems(itemList)
+                        //For the sake of recycling/Looping items, add the adapter to recycler
+                        recyclerView.adapter = depAdapter
+                        progress.visibility = View.GONE
+                        swiperefresh.isRefreshing = false
+                    }
+                    override fun onSuccess(result: JSONObject?) {
+                        Toast.makeText(applicationContext, result.toString(),
+                            Toast.LENGTH_SHORT).show()
+                        progress.visibility = View.GONE
+                    }
+        
+                    override fun onFailure(result: String?) {
+                        Toast.makeText(applicationContext, "Error:"+result.toString(),
+                            Toast.LENGTH_SHORT).show()
+                        //It returns a msg : Token Expired
+                        val json = JSONObject(result.toString())
+                        val msg = json.opt("msg")
+                        //TODO
+                        if (msg == "Token has Expired"){
+                             PrefsHelper.clearPrefs(applicationContext)
+                             startActivity(Intent(applicationContext, SignInActivity::class.java))
+                            finishAffinity()
+                        }
+                        Log.d("failureerrors", result.toString())
+                    }
+                })
+            }//end fetch
+        
+        
+            private fun filter(text: String) {
+                // creating a new array list to filter our data.
+                val filteredlist: ArrayList<Dependant> = ArrayList()
+                // running a for loop to compare elements.
+                for (item in itemList) {
+                    // checking if the entered string matched with any item of our recycler view.
+                    if (item.surname.lowercase().contains(text.lowercase())) {
+                        // if the item is matched we are
+                        // adding it to our filtered list.
+                        filteredlist.add(item)
+                    }
+                }
+                if (filteredlist.isEmpty()) {
+                    // if no item is added in filtered list we are
+                    // displaying a toast message as no data found.
+                    //Toast.makeText(this, "No Data Found..", Toast.LENGTH_SHORT).show()
+                    depAdapter.filterList(filteredlist)
+                } else {
+                    // at last we are passing that filtered
+                    // list to our adapter class.
+                    depAdapter.filterList(filteredlist)
+                }
+            }
+        
+        }//end class
+
+
+To Link to ViewDependants.kt from AddDependants, Recall in AddDependants XML there was a button for View Dependants, In AddDependants.kt Activity, Update with this Code
+
+                val mydependants  = root.findViewById<MaterialButton>(R.id.mydependants)
+                mydependants.setOnClickListener {
+                    // Below Intent, Link to ViewDependants::class.java
+                    startActivity(Intent(requireContext(), ViewDependants::class.java))
+                }
+
+Now Run your App, From the MainActivity, Click on Profile Button(You must be logged in). The Click on AddDependant Bottom Nav. <br>
+Test Add Dependants and View Dependants.
 
 
 
