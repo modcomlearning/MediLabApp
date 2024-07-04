@@ -3224,3 +3224,195 @@ Screenshot before Login<br>
 <br>
 Screenshot after Login.<br>
 <img src="img_19.png" width="250"/>
+
+## Part 5
+### Step 1
+In this Part, we will create a MemberProfile section, This will include Viewing Logged in Member Details, Add Dependants and View Dependants.
+<br>
+In your main package, create a New Botton Navigation Activity, below is activity_member_profile.xml file 
+
+
+        <?xml version="1.0" encoding="utf-8"?>
+        <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingTop="?attr/actionBarSize">
+        
+            <com.google.android.material.bottomnavigation.BottomNavigationView
+                android:id="@+id/nav_view"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="0dp"
+                android:layout_marginEnd="0dp"
+                android:background="?android:attr/windowBackground"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:menu="@menu/bottom_nav_menu" />
+        
+            <fragment
+                android:id="@+id/nav_host_fragment_activity_member_profile"
+                android:name="androidx.navigation.fragment.NavHostFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:defaultNavHost="true"
+                app:layout_constraintBottom_toTopOf="@id/nav_view"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:navGraph="@navigation/mobile_navigation" />
+        
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+Below is the corresponding MemberProfile.kt code. Below code have 2 Bottom navigations represented by their IDs.     R.id.navigation_home, R.id.navigation_dependants <br>
+
+
+        package com.modcom.medilabsapp
+        import android.os.Bundle
+        import com.google.android.material.bottomnavigation.BottomNavigationView
+        import androidx.appcompat.app.AppCompatActivity
+        import androidx.navigation.findNavController
+        import androidx.navigation.ui.AppBarConfiguration
+        import androidx.navigation.ui.setupActionBarWithNavController
+        import androidx.navigation.ui.setupWithNavController
+        import com.modcom.medilabsapp.databinding.ActivityMemberProfileBinding
+        
+        class MemberProfile : AppCompatActivity() {
+        
+            private lateinit var binding: ActivityMemberProfileBinding
+        
+            override fun onCreate(savedInstanceState: Bundle?) {
+                super.onCreate(savedInstanceState)
+                binding = ActivityMemberProfileBinding.inflate(layoutInflater)
+                setContentView(binding.root)
+        
+                val navView: BottomNavigationView = binding.navView
+        
+                val navController = findNavController(R.id.nav_host_fragment_activity_member_profile)
+                // Passing each menu ID as a set of Ids because each
+                // menu should be considered as top level destinations.
+                val appBarConfiguration = AppBarConfiguration(
+                    setOf(
+                        R.id.navigation_home, R.id.navigation_dependants
+                    )
+                )
+                setupActionBarWithNavController(navController, appBarConfiguration)
+                navView.setupWithNavController(navController)
+            }
+        }
+
+
+Under **ui** package, Open HomeFragment.kt, here we will create the member profile, already we have the member details in the SharedPrefferences, we can retrieve them with below code and bind them in TextViews.
+
+          val userObject = PrefsHelper.getPrefs(requireContext(), "userObject")
+
+
+Below is the code for home fragment XML.
+
+        <?xml version="1.0" encoding="utf-8"?>
+        <LinearLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:layout_height="match_parent"
+            tools:context=".ui.home.HomeFragment">
+        
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="My Profile"
+                android:textSize="30sp"
+                android:textAlignment="center"
+                android:textStyle="bold"/>
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Jane"
+                android:textSize="14sp"
+                android:textAlignment="center"
+                android:id="@+id/surname"
+                android:textStyle="normal"/>
+        
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Jane"
+                android:textSize="14sp"
+                android:textAlignment="center"
+                android:id="@+id/others"
+                android:textStyle="normal"/>
+              <!--  TODO others-->
+        
+        </LinearLayout>
+
+
+Below is the code for HomeFragment.kt. 
+
+        package com.modcom.medilabsapp.ui.home
+        import android.os.Bundle
+        import android.view.LayoutInflater
+        import android.view.View
+        import android.view.ViewGroup
+        import android.widget.TextView
+        import androidx.fragment.app.Fragment
+        import androidx.lifecycle.ViewModelProvider
+        import com.google.android.material.textview.MaterialTextView
+        import com.modcom.medilabsapp.databinding.FragmentHomeBinding
+        import com.modcom.medilabsapp.helpers.PrefsHelper
+        import org.json.JSONObject
+        
+        class HomeFragment : Fragment() {
+        
+            private var _binding: FragmentHomeBinding? = null
+        
+            // This property is only valid between onCreateView and
+            // onDestroyView.
+            private val binding get() = _binding!!
+        
+            override fun onCreateView(
+                inflater: LayoutInflater,
+                container: ViewGroup?,
+                savedInstanceState: Bundle?
+            ): View {
+        
+        
+                _binding = FragmentHomeBinding.inflate(inflater, container, false)
+                val root: View = binding.root
+                //Code here
+                val userObject = PrefsHelper.getPrefs(requireContext(), "userObject")
+                val user = JSONObject(userObject) //convert to JSON Object
+                //Text View 1
+                val surname = _binding!!.surname  //find view
+                surname.text = "Surname: "+ user.getString("surname")
+                //Text View 2
+                val others = _binding!!.others  //find view
+                others.text = "Others: "+user.getString("others")
+        
+               //gender, dob, reg_date, email
+        
+        
+        
+                return root
+            }
+        
+            override fun onDestroyView() {
+                super.onDestroyView()
+                _binding = null
+            }
+        }
+
+NB: Above code is a Fragment not an Activity. 
+Read more  https://developer.android.com/guide/fragments
+below code accesses the XML
+
+           _binding = FragmentHomeBinding.inflate(inflater, container, false)
+           val root: View = binding.root
+
+We also use requireContext(), as this is a Fragment. in Activities, we used getApplicationContext().
+
+
