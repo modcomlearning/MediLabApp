@@ -59,6 +59,7 @@ class CheckoutStep2GPS : AppCompatActivity() {
 
         val complete = findViewById<Button>(R.id.complete)
         complete.setOnClickListener {
+            //Again save the actual coordinates to Prefs
             PrefsHelper.savePrefs(applicationContext, "latitude",
                 editLatitude.text.toString())
             PrefsHelper.savePrefs(applicationContext, "longitude",
@@ -143,6 +144,7 @@ class CheckoutStep2GPS : AppCompatActivity() {
                          editLongitude.setText(location.longitude.toString())
                          progress.visibility = View.GONE
 
+                         //Save the coordinates in Prefs
                          PrefsHelper.savePrefs(applicationContext, "latitude", editLatitude.text.toString())
                          PrefsHelper.savePrefs(applicationContext, "longitude", editLongitude.text.toString())
 

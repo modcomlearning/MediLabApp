@@ -11,6 +11,7 @@ class NetworkHelper {
          fun checkForInternet(context: Context): Boolean {
             // register activity with the connectivity manager service
             val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            //This will work for Android M and above
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 val network = connectivityManager.activeNetwork ?: return false
                 // Representation of the capabilities of an active network.

@@ -19,23 +19,30 @@ class CompleteActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_complete)
-        //You must have internet
-        //Use NetworkHelper
-        // Get the required payload to make booking from the Shared preferences
-        // Payload
-            //Lets get to SQLIte, fetch the Tests Picked by user
+
+            //Access SQLIte Helper
             val sqllitehelper = SQLiteCartHelper(applicationContext)
-            val items = sqllitehelper.getAllItems()
-            val invoice_no = generateInvoiceNumber() //Autogenerate
+            val items = sqllitehelper.getAllItems() //Get All items
+            //Generate Invoice No. Check this Function at the bottom of this File
+            val invoice_no = generateInvoiceNumber()
+
             //Save Invoice No  to Prefs
             PrefsHelper.savePrefs(applicationContext, "invoice_no", invoice_no)
-            val numItems = items.size
+            val numItems = items.size // Get all items size,
+            //Loop each item
             items.forEachIndexed { index, labTests ->
             //How many Items do you have?
-                // Capture test ID/Lab ID at a given Loop
+            // Capture test ID/Lab ID at a given Loop
+            //Each item has a test_id and lab_id
             val test_id = labTests.test_id
             val lab_id = labTests.lab_id
 
+            //Can Toast at this Point
+            //Toast.makeText(applicationContext, "Test ID ${test_id} and Lab ID ${lab_id}", Toast.LENGTH_SHORT).show()
+
+            //Capture other details from Preferences, These were saved in different part in this projects
+            //NB: You might need to confirm that below were saved in preferences.
+            //Retrieve all details from prefs
             val member_id = PrefsHelper.getPrefs(this, "member_id")
             val date = PrefsHelper.getPrefs(this, "date")
             val time = PrefsHelper.getPrefs(this, "time")
@@ -44,8 +51,8 @@ class CompleteActivity : AppCompatActivity() {
             val latitude = PrefsHelper.getPrefs(this, "latitude")
             val longitude = PrefsHelper.getPrefs(this, "longitude")
             val dependant_id = PrefsHelper.getPrefs(this, "dependant_id")
-//            val invoice_no = generateInvoiceNumber() //Autogenerate
 
+            //Access API helper and Post your variables to API
             val helper = ApiHelper(this)
             val api = Constants.BASE_URL + "/make_booking"
             val body = JSONObject()
@@ -63,48 +70,41 @@ class CompleteActivity : AppCompatActivity() {
 
             helper.post(api, body, object : ApiHelper.CallBack {
                 override fun onSuccess(result: JSONObject?) {
+                    //Success Posted
                     Toast.makeText(applicationContext, result.toString(), Toast.LENGTH_SHORT).show()
 
                 }
 
                 override fun onFailure(result: String?) {
+                     //Failed to POST
                     Toast.makeText(applicationContext,
                         result.toString(), Toast.LENGTH_SHORT).show()
-                    val json = JSONObject(result.toString())
-                    val msg = json.opt("msg")
-                    //TODO
-                    if (msg == "Token has Expired"){
-                        PrefsHelper.clearPrefs(applicationContext)
-                        startActivity(Intent(applicationContext, SignInActivity::class.java))
-                        finishAffinity()
-                    }
+    //                    val json = JSONObject(result.toString())
+    //                    val msg = json.opt("msg")
+    //                    //TODO
+    //                    if (msg == "Token has Expired"){
+    //                        PrefsHelper.clearPrefs(applicationContext)
+    //                        startActivity(Intent(applicationContext, SignInActivity::class.java))
+    //                        finishAffinity()
+    //                    }
                 }
 
                 override fun onSuccess(result: JSONArray?) {
 
                 }
              })//end post
-                //Index counts from zero
+                //Index counts from zero, Means all lab tests have been posted to API we can now Proceed to Payment
              if (index == (numItems-1)){
                  Toast.makeText(applicationContext, "Processing Done", Toast.LENGTH_SHORT).show()
                  startActivity(Intent(applicationContext, Payment::class.java))
                  finish()
-                 //Make sure booking works
-                 //Create a single item XML for singlebooking.xml
-                 // include appointment_date, appointment_time, status in singlebooking.xml
-                 //Do a Booking Model should follow the mybooking API response
-                 //Do an Adapter
-                 //Do MyBookings Activity, to show the booking.
-                 //Reference: ViewDependants.
-                 //Intent from Screen2, using Skip button
-                 //Payment, Themes, Publishing, Github
-                 //MyBookings
              }//end
 
 
             }//end for each
     }//end oncreate
 
+    //Generate Invoice Number Function
     fun generateInvoiceNumber(): String {
         val dateFormat = SimpleDateFormat("yyyyMMddHHmmss")
         val currentTime = Date()
@@ -116,7 +116,7 @@ class CompleteActivity : AppCompatActivity() {
         val randomNumber = random.nextInt(1000) // Change the upper bound as needed
 
         // Combine the timestamp and random number to create the invoice number
-        return "INV-$timestamp-$randomNumber"
+        return "INV-$timestamp-$randomNumber" //Unique
     }
     //github.com/modcomlearning/MediLabApp
 }//end class

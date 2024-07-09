@@ -4602,16 +4602,10 @@ In CheckoutStep2GPS.kt write below code to retrieve phones GPS and place in Edit
                     progress.visibility = View.VISIBLE
                     requestLocation()
                 }//end
+
+                //Handle Complete Button Here in Step 6
         
-                val complete = findViewById<Button>(R.id.complete)
-                complete.setOnClickListener {
-                    PrefsHelper.savePrefs(applicationContext, "latitude",
-                        editLatitude.text.toString())
-                    PrefsHelper.savePrefs(applicationContext, "longitude",
-                        editLongitude.text.toString())
-                    val intent = Intent(applicationContext, CompleteActivity::class.java)
-                    startActivity(intent)
-                }
+              
         
             }//end onCreate
         
@@ -4950,9 +4944,6 @@ Below is the Full CheckoutStep1.kt
                    LocationManager.NETWORK_PROVIDER
                )
            }//end
-        
-        
-        
         }//end class
 
 
@@ -4972,6 +4963,422 @@ Open the DependantAdapter.kt under **onBindViewHolder()** function. and update t
                  i.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                  context.startActivity(i)
          }//end Listener
+
+
+
+## Part 6
+### Step 1
+
+Create a New Empty Views Activity named CompleteActivity.kt and its XML
+In activity_complete.xml write below code
+
+        <?xml version="1.0" encoding="utf-8"?>
+        <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/teal_700"
+        tools:context=".CompleteActivity">
+        <ProgressBar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="30dp"/>
+        
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Proccessing...Please Wait."
+                android:textSize="40dp"
+                android:textAlignment="center"
+                android:textColor="@color/white"/>
+        
+        </LinearLayout>
+
+### Step 2
+In CompleteActivity.kt write below code
+
+    package com.modcom.medilabsapp
+    import android.content.Intent
+    import android.os.Build
+    import androidx.appcompat.app.AppCompatActivity
+    import android.os.Bundle
+    import android.util.Log
+    import android.widget.Toast
+    import com.modcom.medilabsapp.constants.Constants
+    import com.modcom.medilabsapp.helpers.ApiHelper
+    import com.modcom.medilabsapp.helpers.PrefsHelper
+    import com.modcom.medilabsapp.helpers.SQLiteCartHelper
+    import org.json.JSONArray
+    import org.json.JSONObject
+    import java.text.SimpleDateFormat
+    import java.util.*
+    
+    
+    class CompleteActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    setContentView(R.layout.activity_complete)
+    
+                //Access SQLIte Helper
+                val sqllitehelper = SQLiteCartHelper(applicationContext)
+                val items = sqllitehelper.getAllItems() //Get All items
+                //Generate Invoice No. Check this Function at the bottom of this File
+                val invoice_no = generateInvoiceNumber()
+    
+                //Save Invoice No  to Prefs
+                PrefsHelper.savePrefs(applicationContext, "invoice_no", invoice_no)
+                val numItems = items.size // Get all items size,
+                //Loop each item
+                items.forEachIndexed { index, labTests ->
+                //How many Items do you have?
+                    // Capture test ID/Lab ID at a given Loop
+                    //Each item has a test_id and lab_id
+                val test_id = labTests.test_id
+                val lab_id = labTests.lab_id
+    
+                //Capture other details from Preferences, These were saved in different part in this projects
+                //NB: You might need to confirm that below were saved in preferences.
+                //Retrieve all details from prefs 
+                val member_id = PrefsHelper.getPrefs(this, "member_id")
+                val date = PrefsHelper.getPrefs(this, "date")
+                val time = PrefsHelper.getPrefs(this, "time")
+                val booked_for = PrefsHelper.getPrefs(this, "booked_for")
+                val where_taken = PrefsHelper.getPrefs(this, "where_taken")
+                val latitude = PrefsHelper.getPrefs(this, "latitude")
+                val longitude = PrefsHelper.getPrefs(this, "longitude")
+                val dependant_id = PrefsHelper.getPrefs(this, "dependant_id")
+    
+                //Access API helper and Post your variables to API
+                val helper = ApiHelper(this)
+                val api = Constants.BASE_URL + "/make_booking"
+                val body = JSONObject()
+                body.put("member_id", member_id)
+                body.put("appointment_date", date)
+                body.put("appointment_time", time)
+                body.put("booked_for", booked_for)
+                body.put("where_taken", where_taken)
+                body.put("latitude", latitude)
+                body.put("longitude", longitude)
+                body.put("dependant_id", dependant_id)
+                body.put("test_id", test_id)
+                body.put("lab_id", lab_id)
+                body.put("invoice_no", invoice_no)
+    
+                helper.post(api, body, object : ApiHelper.CallBack {
+                    override fun onSuccess(result: JSONObject?) {
+                        //Success Posted
+                        Toast.makeText(applicationContext, result.toString(), Toast.LENGTH_SHORT).show()
+    
+                    }
+    
+                    override fun onFailure(result: String?) {
+                         //Failed to POST
+                        Toast.makeText(applicationContext,
+                            result.toString(), Toast.LENGTH_SHORT).show()
+                        //                    val json = JSONObject(result.toString())
+                        //                    val msg = json.opt("msg")
+                        //                    //TODO
+                        //                    if (msg == "Token has Expired"){
+                        //                        PrefsHelper.clearPrefs(applicationContext)
+                        //                        startActivity(Intent(applicationContext, SignInActivity::class.java))
+                        //                        finishAffinity()
+                        //                    }
+                    }
+    
+                    override fun onSuccess(result: JSONArray?) {
+    
+                    }
+                 })//end post
+                    //Index counts from zero, Means all lab tests have been posted to API we can now Proceed to Payment 
+                 if (index == (numItems-1)){
+                     Toast.makeText(applicationContext, "Processing Done", Toast.LENGTH_SHORT).show()
+                     //To activate the Intent Later once the Payment.kt is available/created
+                     //startActivity(Intent(applicationContext, Payment::class.java))
+                     //finish()
+                 }//end
+    
+    
+                }//end for each
+        }//end oncreate
+    
+        //Generate Invoice Number Function
+        fun generateInvoiceNumber(): String {
+            val dateFormat = SimpleDateFormat("yyyyMMddHHmmss")
+            val currentTime = Date()
+            val timestamp = dateFormat.format(currentTime)
+    
+            // You can use a random number or a sequential number to add uniqueness to the invoice number
+            // For example, using a random number:
+            val random = Random()
+            val randomNumber = random.nextInt(1000) // Change the upper bound as needed
+    
+            // Combine the timestamp and random number to create the invoice number
+            return "INV-$timestamp-$randomNumber" //Unique
+        }
+        //github.com/modcomlearning/MediLabApp
+    }//end class
+
+
+
+In Your CheckoutStep2GPS.kt Add below code in onCreate Function, Note that there was a complete Button in CheckoutStep2GPS XML.
+
+               val complete = findViewById<Button>(R.id.complete)
+               complete.setOnClickListener {
+                    PrefsHelper.savePrefs(applicationContext, "latitude",
+                        editLatitude.text.toString())
+                    PrefsHelper.savePrefs(applicationContext, "longitude",
+                        editLongitude.text.toString())
+                    val intent = Intent(applicationContext, CompleteActivity::class.java)
+                    startActivity(intent)
+                }
+
+
+Run and test your Application <br>
+Test Booking is Working
+
+## Part 7
+### Step 1
+In your main package, Create an Empty Views Activity named Payment. <br>
+in activity_payment.xml write below code.
+    
+       <?xml version="1.0" encoding="utf-8"?>
+        <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context=".Payment">
+        
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Please Pay 1,500"
+                android:padding="20dp"
+                android:textSize="30sp"
+                android:textAlignment="center"
+                android:id="@+id/textpay"/>
+        
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:padding="20dp"
+                android:hint="Your Phone">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="phone"
+                    android:id="@+id/phone"/>
+            </com.google.android.material.textfield.TextInputLayout>
+        
+        
+            <com.google.android.material.button.MaterialButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Pay Now"
+                android:layout_margin="20dp"
+                android:id="@+id/btnpay"/>
+        
+        
+        
+        </LinearLayout>
+
+
+### Step 2
+in Payment.kt, write below code
+
+        package com.modcom.medilabsapp
+        import android.content.Intent
+        import androidx.appcompat.app.AppCompatActivity
+        import android.os.Bundle
+        import android.widget.Toast
+        import com.google.android.material.button.MaterialButton
+        import com.google.android.material.textfield.TextInputEditText
+        import com.google.android.material.textview.MaterialTextView
+        import com.modcom.medilabsapp.constants.Constants
+        import com.modcom.medilabsapp.helpers.ApiHelper
+        import com.modcom.medilabsapp.helpers.PrefsHelper
+        import com.modcom.medilabsapp.helpers.SQLiteCartHelper
+        import org.json.JSONArray
+        import org.json.JSONObject
+        
+        class Payment : AppCompatActivity() {
+        override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_payment)
+        //Find TextView with id textpay
+        val textpay = findViewById<MaterialTextView>(R.id.textpay)
+        //Access helper
+        val helper = SQLiteCartHelper(applicationContext)
+        textpay.text = "Please Pay KES "+helper.totalCost() //Set Total Cost in TextView
+        
+                //Find Button and set Listener
+                val btnpay = findViewById<MaterialButton>(R.id.btnpay)
+                btnpay.setOnClickListener {
+                    //Find the phone EditText
+                    val phone = findViewById<TextInputEditText>(R.id.phone)
+                    //Access base URL
+                    val api = Constants.BASE_URL+"/make_payment"
+                    //Create JSON
+                    val body = JSONObject()
+                    //Put variables phone and amount
+                    body.put("phone", phone.text.toString())//254
+                    body.put("amount", helper.totalCost())
+                    //body.put("amount", "1")  //For Testing
+                    
+                    //Get from invoice_no from prefs
+                    val invoice_no = PrefsHelper.getPrefs(this, "invoice_no")
+                    //put invoice in body
+                    body.put("invoice_no", invoice_no)// get from prefs
+        
+                    //Access Helper
+                    val apihelper = ApiHelper(applicationContext)
+                    //Post body to API
+                    apihelper.post2(api, body, object : ApiHelper.CallBack{
+                        override fun onSuccess(result: JSONArray?) {
+        
+                        }
+        
+                        override fun onSuccess(result: JSONObject?) {
+                            //SUccess
+                            Toast.makeText(applicationContext, result.toString(),
+                                Toast.LENGTH_SHORT).show()
+                        }
+        
+                        override fun onFailure(result: String?) {
+                            //Failure
+                            Toast.makeText(applicationContext,
+                                result.toString(), Toast.LENGTH_SHORT).show()
+                            //                    val json = JSONObject(result.toString())
+                            //                    val msg = json.opt("msg")
+                            //                    //TODO
+                            //                    if (msg == "Token has Expired"){
+                            //                        PrefsHelper.clearPrefs(applicationContext)
+                            //                        startActivity(Intent(applicationContext, SignInActivity::class.java))
+                            //                        finishAffinity()
+                            //                    }
+                        }
+                    })
+                }//end listener
+            }//end oncreate
+        }//end class
+
+
+
+In CompleteActivity.kt, enable below Intent <br>
+       
+        if (index == (numItems-1)){
+            Toast.makeText(applicationContext, "Processing Done", Toast.LENGTH_SHORT).show()
+            //To activate the Intent Later once the Payment.kt is available/created
+            // ADD/ENABLE BELOW INTENT TO TAKE US TO PAYMENT ACTIVITY
+            startActivity(Intent(applicationContext, Payment::class.java))
+            finish()
+        }//end
+
+Run and test your Application <br>
+Test Payment is Working
+
+
+## Part 8
+### Step 1
+In this Application, we needed data connection in many activities such as SignIn, SignUp, Fetching Laboratories, Lab Tests, Making Payment etc,<br>
+Its important to have a function to check whether a user has internet or not in their devices<br>
+In this section we create a function to whether a user has internet or not in their devices <br>
+in helpers pckage create a Kotlin class file named NetworkHelper.kt and write below code
+
+
+        package com.modcom.medilabsapp.helpers
+        import android.content.Context
+        import android.net.ConnectivityManager
+        import android.net.NetworkCapabilities
+        import android.os.Build
+        
+        class NetworkHelper {
+            companion object {
+                //justpaste.it/6l88f
+                fun checkForInternet(context: Context): Boolean {
+                // register activity with the connectivity manager service
+                val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+                //This will work for Android M and above
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                val network = connectivityManager.activeNetwork ?: return false
+                // Representation of the capabilities of an active network.
+                val activeNetwork = connectivityManager.getNetworkCapabilities(network) ?: return false
+                return when {
+                    activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+                    // Indicates this network uses a Cellular transport. or
+                    // Cellular has network connectivity
+                    activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+                    // else return false
+                    else -> false
+                    }
+                } else {
+                    // if the android version is below M
+                    @Suppress("DEPRECATION") val networkInfo =
+                    connectivityManager.activeNetworkInfo ?: return false
+                    @Suppress("DEPRECATION")
+                    return networkInfo.isConnected
+                    }//end else
+                }//end check net function
+            }//end companion
+        }//end class
+
+
+
+To use above function, we can put it in MainActivity in Screen1. <br>
+Below is an updated Scrren1.kt with check internet functionality
+    
+        package com.modcom.medilabsapp
+        import android.content.Intent
+        import androidx.appcompat.app.AppCompatActivity
+        import android.os.Bundle
+        import android.widget.Toast
+        import com.google.android.material.floatingactionbutton.FloatingActionButton
+        import com.google.android.material.textview.MaterialTextView
+        import com.modcom.medilabsapp.helpers.NetworkHelper
+        import com.modcom.medilabsapp.helpers.SQLiteCartHelper
+        
+        class Screen1 : AppCompatActivity() {
+        override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_screen1)
+        
+                //Check For Internet Connection
+                if(!NetworkHelper.checkForInternet(applicationContext)){
+                    Toast.makeText(applicationContext, "Not Internet", Toast.LENGTH_SHORT).show()
+                    startActivity(Intent(applicationContext, NoNetActivity::class.java))
+                    finish()
+                }
+                else {
+                    //There is Internet Connection
+                    //Find Views by ID
+                    val skip1 = findViewById<MaterialTextView>(R.id.skip1)
+                    //Button to Go Next to Screen 2
+                    skip1.setOnClickListener {
+                        startActivity(Intent(applicationContext, MainActivity::class.java))
+                    }// End
+        
+                    //Button to Skip to Main Activity
+                    val fab = findViewById<FloatingActionButton>(R.id.fab)
+                    fab.setOnClickListener {
+                        startActivity(Intent(applicationContext, Screen2::class.java))
+                    }// End
+                }
+            }
+        }
+
+NB:  Create an Empty Views Activity named  NoNetActivity.kt to be called if No Internet. <br>
+    
+
+
+
+
+
 
 
 
